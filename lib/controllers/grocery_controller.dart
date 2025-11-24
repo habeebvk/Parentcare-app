@@ -1,13 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:parent_care/controllers/item_controller.dart';
 import 'package:parent_care/model/store_model.dart';
 
 class GroceryController extends GetxController {
-  Rx<StoreModel?> selectedStore = Rx<StoreModel?>(null);
-  RxMap<String, int> cart = <String, int>{}.obs;
-  RxBool homeDelivery = false.obs;
-
-  // Dummy store list
+  // ---------------- STORE LIST (Dummy Data) ----------------
   RxList<StoreModel> stores = <StoreModel>[
     StoreModel(
       id: "1",
@@ -30,6 +28,18 @@ class GroceryController extends GetxController {
     ),
   ].obs;
 
+  // ---------------- STATE VARIABLES ----------------
+  Rx<StoreModel?> selectedStore = Rx<StoreModel?>(null);
+  RxMap<String, int> cart = <String, int>{}.obs; // itemId → qty
+  RxBool homeDelivery = false.obs;
+
+  // ---------------- SELECT STORE ----------------
+  void selectStore(StoreModel store) {
+    selectedStore.value = store;
+    cart.clear();
+  }
+
+  // ---------------- ADD ITEM TO CART ----------------
   void addToCart(GroceryItem item) {
     if (cart.containsKey(item.id)) {
       cart[item.id] = cart[item.id]! + 1;
@@ -38,27 +48,65 @@ class GroceryController extends GetxController {
     }
   }
 
-  void selectStore(StoreModel store) {
-    selectedStore.value = store;
-    cart.clear();
-  }
-
+  // ---------------- TOTAL PRICE ----------------
   double get total {
     double sum = 0;
-    cart.forEach((key, qty) {
-      final item = selectedStore.value!.items.firstWhere((x) => x.id == key);
+
+    cart.forEach((itemId, qty) {
+      final item =
+          selectedStore.value!.items.firstWhere((element) => element.id == itemId);
       sum += item.price * qty;
     });
-    if (homeDelivery.value) sum += 20; // Delivery Fee
+
+    if (homeDelivery.value) sum += 20;
+
     return sum;
   }
 
-  void confirmOrder() {
+  // ---------------- FIREBASE SAVE ORDER ----------------
+  Future<void> confirmOrder() async {
     if (selectedStore.value == null || cart.isEmpty) {
-      Get.snackbar("Error", "Please select items first");
+      Get.snackbar("Error", "Please add items to the cart!");
       return;
     }
 
-    Get.snackbar("Order Placed", "Your grocery order is confirmed!");
+    try {
+      // Convert cart → Firebase-friendly format
+      List<Map<String, dynamic>> itemsList = cart.entries.map((entry) {
+        final item = selectedStore.value!.items
+            .firstWhere((element) => element.id == entry.key);
+
+        return {
+          "id": item.id,
+          "name": item.name,
+          "price": item.price,
+          "quantity": entry.value,
+          "total": item.price * entry.value
+        };
+      }).toList();
+
+      await FirebaseFirestore.instance.collection("grocery_orders").add({
+        "store_id": selectedStore.value!.id,
+        "store_name": selectedStore.value!.name,
+        "items": itemsList,
+        "home_delivery": homeDelivery.value,
+        "total_price": total,
+        "createdAt": Timestamp.now(),
+      });
+
+      // Show dialog
+      Get.defaultDialog(
+        title: "Order Confirmed",
+        middleText: "Your grocery order has been placed successfully!",
+      );
+
+      // Reset after order
+      selectedStore.value = null;
+      cart.clear();
+      homeDelivery.value = false;
+
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    }
   }
 }

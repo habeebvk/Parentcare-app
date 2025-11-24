@@ -1,20 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:parent_care/controllers/register_controller.dart';
+import 'package:parent_care/auth/auth_services.dart';
+import 'package:parent_care/screens/authentication/login.dart';
+import 'package:parent_care/screens/into.dart';
 import 'package:parent_care/screens/widgets/auth_widget.dart';
 
-class RegisterScreen extends StatelessWidget {
+
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.put(RegisterController());
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
 
+class _RegisterScreenState extends State<RegisterScreen> {
+  final FirebaseAuthServices _auth = FirebaseAuthServices();
+
+  String name = "";
+  String email = "";
+  String password = "";
+  bool isLoading = false;
+
+  void register() async {
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage("Please fill all fields");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final user = await _auth.createUser(email.trim(), password.trim());
+
+      if (user != null) {
+        _showMessage("Account created!");
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
+    } catch (error) {
+      _showMessage(error.toString());
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  void _showMessage(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -23,7 +67,7 @@ class RegisterScreen extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent,
+                    color: const Color(0xffeb4034),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -32,7 +76,7 @@ class RegisterScreen extends StatelessWidget {
                   hint: "Full Name",
                   hintStyle: GoogleFonts.poppins(),
                   textStyle: GoogleFonts.poppins(),
-                  onChanged: (val) => controller.name.value = val,
+                  onChanged: (v) => name = v,
                 ),
                 const SizedBox(height: 16),
 
@@ -40,7 +84,7 @@ class RegisterScreen extends StatelessWidget {
                   hint: "Email Address",
                   hintStyle: GoogleFonts.poppins(),
                   textStyle: GoogleFonts.poppins(),
-                  onChanged: (val) => controller.email.value = val,
+                  onChanged: (v) => email = v,
                 ),
                 const SizedBox(height: 16),
 
@@ -49,43 +93,44 @@ class RegisterScreen extends StatelessWidget {
                   isPassword: true,
                   hintStyle: GoogleFonts.poppins(),
                   textStyle: GoogleFonts.poppins(),
-                  onChanged: (val) => controller.password.value = val,
+                  onChanged: (v) => password = v,
                 ),
                 const SizedBox(height: 30),
 
-                Obx(
-                  () => ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 55),
-                      backgroundColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 55),
+                    backgroundColor: const Color(0xffeb4034),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    onPressed: controller.isLoading.value
-                        ? null
-                        : () => controller.register(),
-                    child: controller.isLoading.value
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                            "Register",
-                            style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
                   ),
+                  onPressed: isLoading ? null : register,
+                  child: isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          "Login",
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                 ),
-
                 const SizedBox(height: 20),
 
                 TextButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const LoginScreen(),
+                      ),
+                    );
+                  },
                   child: Text(
                     "Already have an account? Login",
                     style: GoogleFonts.poppins(
-                      fontSize: 14,
                       color: const Color(0xffeb4034),
                     ),
                   ),
@@ -98,4 +143,3 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 }
-

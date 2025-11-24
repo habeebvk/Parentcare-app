@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:parent_care/controllers/appointment_controller.dart';
 import 'package:parent_care/screens/widgets/hospital_card.dart';
-import '../controllers/appointment_controller.dart';
+
 
 class AppointmentScreen extends StatelessWidget {
   const AppointmentScreen({super.key});

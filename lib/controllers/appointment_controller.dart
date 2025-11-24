@@ -1,45 +1,106 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:parent_care/model/hospital_model.dart';
+
+// Hospital model
+class Hospital {
+  final String id;
+  final String name;
+  final String? address;
+
+  Hospital({
+    required this.id,
+    required this.name,
+    this.address,
+  });
+}
 
 class AppointmentController extends GetxController {
-  var hospitals = <Hospital>[].obs;
-  var selectedHospital = Rx<Hospital?>(null);
-  var selectedDate = ''.obs;
-  var selectedTime = ''.obs;
+  // Observables
+  RxList<Hospital> hospitals = <Hospital>[].obs;
+  Rx<Hospital?> selectedHospital = Rx<Hospital?>(null);
 
-  var tokenNumber = ''.obs;
+  RxString selectedDate = "".obs;
+  RxString selectedTime = "".obs;
+  RxString tokenNumber = "".obs;
 
   @override
   void onInit() {
     super.onInit();
-
-    // Dummy hospital list
-    hospitals.value = [
-      Hospital(id: 1, name: "City Hospital", address: "Main Road, Town"),
-      Hospital(id: 2, name: "Lotus Medical Center", address: "Lake View, City"),
-      Hospital(id: 3, name: "Sunrise Hospital", address: "Highway Junction"),
-    ];
+    loadHospitals();
   }
 
+  /// Load hospitals from Firebase, fallback to dummy data if Firestore empty
+  void loadHospitals() async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection("hospitals").get();
+
+      if (snapshot.docs.isNotEmpty) {
+        hospitals.value = snapshot.docs.map((e) {
+          return Hospital(
+            id: e.id,
+            name: e['name'],
+            address: e['address'] ?? "",
+          );
+        }).toList();
+
+        selectedHospital.value = hospitals.first;
+      } else {
+        // FALLBACK: Dummy hospitals
+        hospitals.value = [
+          Hospital(id: "1", name: "City Hospital", address: "Main Road"),
+          Hospital(id: "2", name: "Lotus Medical Center", address: "Lake View"),
+          Hospital(id: "3", name: "Sunrise Hospital", address: "Highway"),
+        ];
+        selectedHospital.value = hospitals.first;
+      }
+    } catch (e) {
+      // If Firebase fails, load dummy hospitals
+      hospitals.value = [
+        Hospital(id: "1", name: "City Hospital", address: "Main Road"),
+        Hospital(id: "2", name: "Lotus Medical Center", address: "Lake View"),
+        Hospital(id: "3", name: "Sunrise Hospital", address: "Highway"),
+      ];
+      selectedHospital.value = hospitals.first;
+    }
+  }
+
+  /// Select a hospital
   void selectHospital(Hospital hospital) {
     selectedHospital.value = hospital;
   }
 
-  void bookAppointment() {
+  /// Save appointment to Firestore + show dialog
+  Future<void> bookAppointment() async {
     if (selectedHospital.value == null ||
-        selectedDate.isEmpty ||
-        selectedTime.isEmpty) {
+        selectedDate.value.isEmpty ||
+        selectedTime.value.isEmpty) {
       Get.snackbar("Error", "Please fill all details");
       return;
     }
 
-    // Generate token (dummy logic)
-    tokenNumber.value = "TOK-${DateTime.now().millisecondsSinceEpoch % 1000}";
+    // Generate token number
+    tokenNumber.value =
+        "TOK-${DateTime.now().millisecondsSinceEpoch % 1000}";
 
-    Get.defaultDialog(
-      title: "Appointment Confirmed",
-      middleText:
-          "Hospital: ${selectedHospital.value!.name}\nDate: ${selectedDate}\nTime: ${selectedTime}\n\nYour Token: ${tokenNumber.value}",
-    );
+    try {
+      await FirebaseFirestore.instance.collection("appointments").add({
+        "hospitalId": selectedHospital.value!.id,
+        "hospitalName": selectedHospital.value!.name,
+        "date": selectedDate.value,
+        "time": selectedTime.value,
+        "token": tokenNumber.value,
+        "createdAt": Timestamp.now(),
+      });
+
+      // Show confirmation dialog
+      Get.defaultDialog(
+        title: "Appointment Confirmed",
+        middleText:
+            "Hospital: ${selectedHospital.value!.name}\nDate: ${selectedDate.value}\nTime: ${selectedTime.value}\n\nYour Token: ${tokenNumber.value}",
+      );
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    }
   }
 }

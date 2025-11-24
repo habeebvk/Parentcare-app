@@ -1,18 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:parent_care/controllers/login_controller.dart';
-import 'package:parent_care/routes/routes.dart';
-import 'package:parent_care/screens/appointment_screen.dart';
+import 'package:parent_care/auth/auth_services.dart';
+import 'package:parent_care/screens/authentication/register.dart';
+import 'package:parent_care/screens/home_screen.dart';
+import 'package:parent_care/screens/into.dart';
 import 'package:parent_care/screens/widgets/auth_widget.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.put(LoginController());
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends State<LoginScreen> {
+  final FirebaseAuthServices _auth = FirebaseAuthServices();
+
+  String email = "";
+  String password = "";
+  bool isLoading = false;
+
+  void login() async {
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage("Please enter email and password");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final user = await _auth.loginUser(email.trim(), password.trim());
+
+      if (user != null) {
+        _showMessage("Login Successful");
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const NavScreen()),
+        );
+      }
+    } catch (error) {
+      _showMessage(error.toString());
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Padding(
@@ -34,7 +75,7 @@ class LoginScreen extends StatelessWidget {
                   hint: "Email Address",
                   hintStyle: GoogleFonts.poppins(),
                   textStyle: GoogleFonts.poppins(),
-                  onChanged: (val) => controller.email.value = val,
+                  onChanged: (v) => email = v,
                 ),
                 const SizedBox(height: 16),
 
@@ -43,7 +84,7 @@ class LoginScreen extends StatelessWidget {
                   isPassword: true,
                   hintStyle: GoogleFonts.poppins(),
                   textStyle: GoogleFonts.poppins(),
-                  onChanged: (val) => controller.password.value = val,
+                  onChanged: (v) => password = v,
                 ),
                 const SizedBox(height: 30),
 
@@ -55,38 +96,36 @@ class LoginScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  onPressed: () {
-                    Get.toNamed('/home');
-                  },
-                  child: Text(
-                    "Login",
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  onPressed: isLoading ? null : login,
+                  child: isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          "Login",
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                 ),
 
                 const SizedBox(height: 20),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Don't have an account?",
-                      style: GoogleFonts.poppins(),
-                    ),
-                    TextButton(
-                      onPressed: () => Get.toNamed(AppRoutes.register),
-                      child: Text(
-                        "Register",
-                        style: GoogleFonts.poppins(
-                          color: const Color(0xffeb4034),
-                        ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const RegisterScreen(),
                       ),
-                    )
-                  ],
+                    );
+                  },
+                  child: Text(
+                    "Don't have an account? Register",
+                    style: GoogleFonts.poppins(
+                      color: const Color(0xffeb4034),
+                    ),
+                  ),
                 )
               ],
             ),
