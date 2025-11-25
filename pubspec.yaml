@@ -97,3 +97,13 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/hand.png"
+
+flutter_native_splash:
+  color: "#ffffff"
+  color_dark: "#000000"
+  image: assets/logo.png
+  branding: assets/branding.png
+  android_12:
+    image: assets/pimage.png
+    icon_background_color: "#ffffff"
+

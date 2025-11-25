@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: const Image(image: AssetImage('assets/oldparents.jpg'), fit: BoxFit.cover)),  
+              child: const Image(image: AssetImage('assets/oldage.jpg'), fit: BoxFit.cover)),  
             Padding(
               padding: const EdgeInsets.only(left: 50,top:200),
               child: Text("Aerofit",style: GoogleFonts.poppins(fontSize: 30,color: Colors.black),),

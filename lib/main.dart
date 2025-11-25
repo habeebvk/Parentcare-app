@@ -24,7 +24,7 @@ class ParentCareApp extends StatelessWidget {
         themeMode: themeController.theme,
         theme: AppThemes.lightTheme,
         darkTheme: AppThemes.darkTheme,
-        initialRoute: AppRoutes.intro,
+        initialRoute: AppRoutes.splash,
         getPages: AppRoutes.pages,
       );
     });

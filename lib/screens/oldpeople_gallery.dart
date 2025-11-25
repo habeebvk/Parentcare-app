@@ -96,6 +96,15 @@ class OldPeopleGalleryScreen extends StatelessWidget {
               },
             ),
 
+            ListTile(
+              leading: const Icon(Icons.hotel),
+              title: Text("Food Order", style: GoogleFonts.poppins()),
+              onTap: () {
+                Get.back();
+                Get.toNamed("/food");
+              },
+            ),
+
             const Divider(),
 
             // 🔥 TOGGLE SWITCH FOR DARK/LIGHT MODE
