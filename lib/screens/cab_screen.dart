@@ -11,17 +11,28 @@ class CabBookingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    // ------------ RESPONSIVE VALUES ------------
+    final width = MediaQuery.of(context).size.width;
+
+    double titleSize = width < 500 ? 20 : 26;
+    double inputFontSize = width < 500 ? 15 : 18;
+    double padding = width < 500 ? 20 : 32;
+    double spacing = width < 500 ? 20 : 28;
+    double buttonHeight = width < 500 ? 55 : 65;
+
     final cardColor = theme.cardColor;
     final textColor = theme.textTheme.bodyMedium?.color;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor, // Auto change
+      backgroundColor: theme.scaffoldBackgroundColor,
+
       appBar: AppBar(
         title: Text(
           "Book a Cab",
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
-            fontSize: 20,
+            fontSize: titleSize,
             color: textColor,
           ),
         ),
@@ -31,54 +42,81 @@ class CabBookingScreen extends StatelessWidget {
       ),
 
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(padding),
         child: Column(
           children: [
-            // Pickup
+
+            // -------- Pickup --------
             TextField(
               controller: controller.pickupController,
-              style: GoogleFonts.poppins(color: textColor),
+              style: GoogleFonts.poppins(
+                color: textColor,
+                fontSize: inputFontSize,
+              ),
               decoration: InputDecoration(
                 labelText: "Pickup Location",
-                labelStyle: GoogleFonts.poppins(color: textColor),
-                filled: true,
-                fillColor: cardColor, // auto change
-                prefixIcon: Icon(Icons.location_on_outlined,
-                    color: theme.iconTheme.color),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
+                labelStyle: GoogleFonts.poppins(
+                  color: textColor,
+                  fontSize: inputFontSize,
                 ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Drop
-            TextField(
-              controller: controller.dropController,
-              style: GoogleFonts.poppins(color: textColor),
-              decoration: InputDecoration(
-                labelText: "Drop Location",
-                labelStyle: GoogleFonts.poppins(color: textColor),
                 filled: true,
                 fillColor: cardColor,
-                prefixIcon: Icon(Icons.flag_outlined,
-                    color: theme.iconTheme.color),
+                prefixIcon: Icon(
+                  Icons.location_on_outlined,
+                  color: theme.iconTheme.color,
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: width < 500 ? 14 : 18,
+                  horizontal: 16,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: spacing),
 
-            // Time Picker
+            // -------- Drop --------
+            TextField(
+              controller: controller.dropController,
+              style: GoogleFonts.poppins(
+                color: textColor,
+                fontSize: inputFontSize,
+              ),
+              decoration: InputDecoration(
+                labelText: "Drop Location",
+                labelStyle: GoogleFonts.poppins(
+                  color: textColor,
+                  fontSize: inputFontSize,
+                ),
+                filled: true,
+                fillColor: cardColor,
+                prefixIcon: Icon(
+                  Icons.flag_outlined,
+                  color: theme.iconTheme.color,
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: width < 500 ? 14 : 18,
+                  horizontal: 16,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+
+            SizedBox(height: spacing),
+
+            // -------- Time Picker --------
             Obx(
               () => GestureDetector(
                 onTap: () => controller.chooseTime(context),
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: width < 500 ? 14 : 18,
+                  ),
                   decoration: BoxDecoration(
                     color: cardColor,
                     borderRadius: BorderRadius.circular(14),
@@ -88,16 +126,14 @@ class CabBookingScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.access_time,
-                          color: theme.iconTheme.color),
+                      Icon(Icons.access_time, color: theme.iconTheme.color),
                       const SizedBox(width: 12),
                       Text(
                         controller.selectedTime.value == null
                             ? "Select Time"
-                            : "${controller.selectedTime.value!.hour.toString().padLeft(2, '0')}"
-                              ":${controller.selectedTime.value!.minute.toString().padLeft(2, '0')}",
+                            : "${controller.selectedTime.value!.hour.toString().padLeft(2, '0')}:${controller.selectedTime.value!.minute.toString().padLeft(2, '0')}",
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
+                          fontSize: inputFontSize,
                           color: textColor,
                         ),
                       ),
@@ -109,14 +145,14 @@ class CabBookingScreen extends StatelessWidget {
 
             const Spacer(),
 
-            // Book Cab Button
+            // -------- Book Button --------
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: controller.bookCab,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.primaryColor, // auto mode color
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: theme.primaryColor,
+                  minimumSize: Size(double.infinity, buttonHeight),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -124,7 +160,7 @@ class CabBookingScreen extends StatelessWidget {
                 child: Text(
                   "Book Cab",
                   style: GoogleFonts.poppins(
-                    fontSize: 18,
+                    fontSize: width < 500 ? 18 : 20,
                     color: Colors.white,
                   ),
                 ),

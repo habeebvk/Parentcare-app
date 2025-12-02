@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:parent_care/controllers/theme_controller.dart';
@@ -16,26 +16,42 @@ class OldPeopleGalleryScreen extends StatelessWidget {
       "assets/old5.jpg",
     ];
 
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
+    // ---------- RESPONSIVE GRID COUNT ----------
+    int crossAxisCount = width < 500
+        ? 2
+        : width < 900
+            ? 3
+            : 4;
+
+    // ---------- RESPONSIVE SIZING ----------
+    double titleSize = width < 500 ? 20 : 26;
+    double subtitleSize = width < 500 ? 14 : 16;
+    double padding = width < 500 ? 12 : 20;
+    double aspectRatio = width < 500 ? 0.85 : 1;
+
     return Scaffold(
-  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
-  appBar: AppBar(
-    title: Text(
-      "Old People Gallery",
-      style: GoogleFonts.poppins(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: Theme.of(context).textTheme.bodyLarge!.color,
+      appBar: AppBar(
+        title: Text(
+          "Old People Gallery",
+          style: GoogleFonts.poppins(
+            fontSize: titleSize - 2,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).textTheme.bodyLarge!.color,
+          ),
+        ),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        elevation: 0,
+        iconTheme: IconThemeData(
+          color: Theme.of(context).iconTheme.color,
+        ),
       ),
-    ),
-    backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-    elevation: 0,
-    iconTheme: IconThemeData(
-      color: Theme.of(context).iconTheme.color,
-    ),
-  ),
 
- drawer: Drawer(
+      drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -107,22 +123,21 @@ class OldPeopleGalleryScreen extends StatelessWidget {
 
             const Divider(),
 
-            // 🔥 TOGGLE SWITCH FOR DARK/LIGHT MODE
             Obx(() {
-                final themeController = Get.find<ThemeController>();
-                return SwitchListTile(
-                  title: Text("Dark Mode", style: GoogleFonts.poppins()),
-                  secondary: Icon(
-                    themeController.isDarkMode.value
-                        ? Icons.dark_mode
-                        : Icons.light_mode,
-                  ),
-                  value: themeController.isDarkMode.value,
-                  onChanged: (value) {
-                    themeController.toggleTheme(value);
-                  },
-                );
-              }),
+              final themeController = Get.find<ThemeController>();
+              return SwitchListTile(
+                title: Text("Dark Mode", style: GoogleFonts.poppins()),
+                secondary: Icon(
+                  themeController.isDarkMode.value
+                      ? Icons.dark_mode
+                      : Icons.light_mode,
+                ),
+                value: themeController.isDarkMode.value,
+                onChanged: (value) {
+                  themeController.toggleTheme(value);
+                },
+              );
+            }),
           ],
         ),
       ),
@@ -130,42 +145,41 @@ class OldPeopleGalleryScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          // ------- Section Title ------
-         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(
-            "Our Loved Seniors",
-            style: GoogleFonts.poppins(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).textTheme.bodyLarge!.color,
+          // ========== TITLE ==========
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding),
+            child: Text(
+              "Our Loved Seniors",
+              style: GoogleFonts.poppins(
+                fontSize: titleSize,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyLarge!.color,
+              ),
             ),
           ),
-        ),
 
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(
-            "Caring, smiling, and inspiring lives every day...",
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              color: Theme.of(context).textTheme.bodyMedium!.color,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding),
+            child: Text(
+              "Caring, smiling, and inspiring lives every day...",
+              style: GoogleFonts.poppins(
+                fontSize: subtitleSize,
+                color: Theme.of(context).textTheme.bodyMedium!.color,
+              ),
             ),
           ),
-        ),
 
           const SizedBox(height: 15),
 
-          // ------- Image Grid -------
+          // ========== RESPONSIVE GRID ==========
           Expanded(
             child: GridView.builder(
-              padding: const EdgeInsets.all(12),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+              padding: EdgeInsets.all(padding),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 0.85,
+                childAspectRatio: aspectRatio,
               ),
               itemCount: images.length,
               itemBuilder: (context, index) {

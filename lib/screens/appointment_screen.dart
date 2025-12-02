@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:parent_care/controllers/appointment_controller.dart';
-import 'package:parent_care/screens/widgets/hospital_card.dart';
-
 
 class AppointmentScreen extends StatelessWidget {
   const AppointmentScreen({super.key});
@@ -12,15 +10,27 @@ class AppointmentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppointmentController controller = Get.put(AppointmentController());
     final theme = Theme.of(context);
+
+    final width = MediaQuery.of(context).size.width;
+
+    // ------------ RESPONSIVE VALUES ------------
+    double titleSize = width < 500 ? 20 : 26;
+    double sectionTitleSize = width < 500 ? 18 : 22;
+    double inputFontSize = width < 500 ? 15 : 17;
+    double padding = width < 500 ? 20 : 30;
+    double spacing = width < 500 ? 12 : 20;
+    double buttonHeight = width < 500 ? 55 : 65;
+
     final textColor = theme.textTheme.bodyLarge!.color;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
+
       appBar: AppBar(
         title: Text(
           "Book Appointment",
           style: GoogleFonts.poppins(
-            fontSize: 20,
+            fontSize: titleSize,
             color: theme.appBarTheme.foregroundColor,
             fontWeight: FontWeight.w600,
           ),
@@ -29,55 +39,82 @@ class AppointmentScreen extends StatelessWidget {
       ),
 
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(padding),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              Text("Select Hospital",
-                  style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: textColor)),
-              const SizedBox(height: 12),
-
-              Obx(() => DropdownButtonFormField(
-                value: controller.selectedHospital.value,
-                decoration: InputDecoration(
-                  labelText: "Select Hospital",
-                  labelStyle: GoogleFonts.poppins(color: textColor),
+              // ----------- SELECT HOSPITAL -----------
+              Text(
+                "Select Hospital",
+                style: GoogleFonts.poppins(
+                  fontSize: sectionTitleSize,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
                 ),
-                items: controller.hospitals.map((hospital) {
-                  return DropdownMenuItem(
-                    value: hospital,
-                    child: Text(
-                      hospital.name,
-                      style: GoogleFonts.poppins(color: textColor),
+              ),
+              SizedBox(height: spacing),
+
+              Obx(
+                () => DropdownButtonFormField(
+                  value: controller.selectedHospital.value,
+                  decoration: InputDecoration(
+                    labelText: "Select Hospital",
+                    labelStyle: GoogleFonts.poppins(
+                      color: textColor,
+                      fontSize: inputFontSize,
                     ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  controller.selectHospital(value!);
-                },
-              )),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: width < 500 ? 14 : 18,
+                    ),
+                  ),
+                  items: controller.hospitals.map((hospital) {
+                    return DropdownMenuItem(
+                      value: hospital,
+                      child: Text(
+                        hospital.name,
+                        style: GoogleFonts.poppins(
+                          color: textColor,
+                          fontSize: inputFontSize,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    controller.selectHospital(value!);
+                  },
+                ),
+              ),
 
-              const SizedBox(height: 25),
+              SizedBox(height: spacing * 2),
 
-              Text("Select Date",
-                  style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: textColor)),
-              const SizedBox(height: 12),
+              // ----------- SELECT DATE -----------
+              Text(
+                "Select Date",
+                style: GoogleFonts.poppins(
+                  fontSize: sectionTitleSize,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              SizedBox(height: spacing),
 
               TextField(
                 readOnly: true,
-                style: GoogleFonts.poppins(color: textColor),
+                style: GoogleFonts.poppins(
+                  color: textColor,
+                  fontSize: inputFontSize,
+                ),
                 decoration: InputDecoration(
                   hintText: "Choose Date",
-                  hintStyle: GoogleFonts.poppins(),
+                  hintStyle: GoogleFonts.poppins(fontSize: inputFontSize),
                   suffixIcon: const Icon(Icons.calendar_month),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: width < 500 ? 14 : 18,
+                  ),
                 ),
                 onTap: () async {
                   DateTime? picked = await showDatePicker(
@@ -93,22 +130,33 @@ class AppointmentScreen extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(height: 25),
+              SizedBox(height: spacing * 2),
 
-              Text("Select Time",
-                  style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: textColor)),
-              const SizedBox(height: 12),
+              // ----------- SELECT TIME -----------
+              Text(
+                "Select Time",
+                style: GoogleFonts.poppins(
+                  fontSize: sectionTitleSize,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              SizedBox(height: spacing),
 
               TextField(
                 readOnly: true,
-                style: GoogleFonts.poppins(color: textColor),
+                style: GoogleFonts.poppins(
+                  color: textColor,
+                  fontSize: inputFontSize,
+                ),
                 decoration: InputDecoration(
                   hintText: "Choose Time",
-                  hintStyle: GoogleFonts.poppins(),
+                  hintStyle: GoogleFonts.poppins(fontSize: inputFontSize),
                   suffixIcon: const Icon(Icons.schedule),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: width < 500 ? 14 : 18,
+                  ),
                 ),
                 onTap: () async {
                   TimeOfDay? picked = await showTimePicker(
@@ -122,14 +170,16 @@ class AppointmentScreen extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(height: 40),
+              SizedBox(height: spacing * 3),
 
+              // ----------- CONFIRM BUTTON -----------
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.primaryColor,
-                  minimumSize: const Size(double.infinity, 55),
+                  minimumSize: Size(double.infinity, buttonHeight),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
                 onPressed: () {
                   controller.bookAppointment();
@@ -137,11 +187,12 @@ class AppointmentScreen extends StatelessWidget {
                 child: Text(
                   "Confirm Appointment",
                   style: GoogleFonts.poppins(
-                    fontSize: 18,
+                    fontSize: width < 500 ? 18 : 20,
                     color: Colors.white,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -149,4 +200,3 @@ class AppointmentScreen extends StatelessWidget {
     );
   }
 }
-

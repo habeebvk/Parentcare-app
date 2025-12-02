@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:parent_care/controllers/alert_controller.dart';
+import 'package:parent_care/utility/responsive_helper.dart';
 
 class NotificationScreen extends StatelessWidget {
   NotificationScreen({super.key});
@@ -11,8 +12,17 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // current theme
+    final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+
+    // --------- RESPONSIVE VALUES -----------
+    double padding = Responsive.isMobile(context) ? 16 : 28;
+    double cardPadding = Responsive.isMobile(context) ? 16 : 24;
+    double titleSize = Responsive.isMobile(context) ? 16 : 22;
+    double messageSize = Responsive.isMobile(context) ? 14 : 18;
+    double timeSize = Responsive.isMobile(context) ? 12 : 16;
+    double iconBoxSize = Responsive.isMobile(context) ? 40 : 55;
+    double notificationIconSize = Responsive.isMobile(context) ? 22 : 30;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -21,18 +31,18 @@ class NotificationScreen extends StatelessWidget {
         title: Text(
           "Notifications",
           style: GoogleFonts.poppins(
-            fontSize: 20,
+            fontSize: Responsive.isMobile(context) ? 20 : 28,
             fontWeight: FontWeight.w600,
             color: theme.appBarTheme.foregroundColor ?? theme.primaryColor,
           ),
         ),
-        backgroundColor: theme.appBarTheme.backgroundColor ??
-            theme.scaffoldBackgroundColor,
-        foregroundColor:
-            theme.appBarTheme.foregroundColor ?? theme.primaryColor,
+        backgroundColor: theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor ?? theme.primaryColor,
+        elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete_sweep),
+            icon: Icon(Icons.delete_sweep,
+                size: Responsive.isMobile(context) ? 22 : 30),
             onPressed: controller.clearAll,
           ),
         ],
@@ -44,7 +54,7 @@ class NotificationScreen extends StatelessWidget {
             child: Text(
               "No Notifications",
               style: GoogleFonts.poppins(
-                fontSize: 16,
+                fontSize: Responsive.isMobile(context) ? 16 : 24,
                 color: theme.textTheme.bodyMedium!.color,
               ),
             ),
@@ -52,7 +62,7 @@ class NotificationScreen extends StatelessWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(padding),
           itemCount: controller.notifications.length,
           itemBuilder: (context, index) {
             final item = controller.notifications[index];
@@ -60,19 +70,19 @@ class NotificationScreen extends StatelessWidget {
             return GestureDetector(
               onTap: () => controller.markAsRead(index),
               child: Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(16),
+                margin: EdgeInsets.only(bottom: padding),
+                padding: EdgeInsets.all(cardPadding),
                 decoration: BoxDecoration(
                   color: item.isRead
                       ? (isDark ? Colors.grey.shade900 : Colors.grey.shade200)
                       : (isDark ? Colors.grey.shade800 : Colors.white),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     if (!isDark)
                       BoxShadow(
                         color: Colors.black12,
-                        blurRadius: 5,
-                        offset: const Offset(0, 3),
+                        blurRadius: 6,
+                        offset: const Offset(0, 4),
                       ),
                   ],
                 ),
@@ -82,7 +92,8 @@ class NotificationScreen extends StatelessWidget {
                   children: [
                     // Icon circle
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      height: iconBoxSize,
+                      width: iconBoxSize,
                       decoration: BoxDecoration(
                         color: isDark
                             ? Colors.red.withOpacity(0.15)
@@ -91,13 +102,14 @@ class NotificationScreen extends StatelessWidget {
                       ),
                       child: Icon(
                         Icons.notifications_active,
+                        size: notificationIconSize,
                         color: const Color(0xffeb4034),
                       ),
                     ),
 
-                    const SizedBox(width: 14),
+                    SizedBox(width: Responsive.isMobile(context) ? 14 : 22),
 
-                    // Text Info
+                    // Text content
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,26 +117,26 @@ class NotificationScreen extends StatelessWidget {
                           Text(
                             item.title,
                             style: GoogleFonts.poppins(
-                              fontSize: 16,
+                              fontSize: titleSize,
                               fontWeight: FontWeight.w600,
                               color: theme.textTheme.bodyLarge!.color,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          SizedBox(height: Responsive.isMobile(context) ? 6 : 10),
 
                           Text(
                             item.message,
                             style: GoogleFonts.poppins(
-                              fontSize: 14,
+                              fontSize: messageSize,
                               color: theme.textTheme.bodyMedium!.color,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: Responsive.isMobile(context) ? 8 : 12),
 
                           Text(
                             item.time,
                             style: GoogleFonts.poppins(
-                              fontSize: 12,
+                              fontSize: timeSize,
                               color: theme.textTheme.bodySmall!.color,
                             ),
                           ),
@@ -134,9 +146,11 @@ class NotificationScreen extends StatelessWidget {
 
                     // Delete button
                     IconButton(
-                      icon: Icon(Icons.close,
-                          size: 18,
-                          color: theme.iconTheme.color ?? Colors.grey),
+                      icon: Icon(
+                        Icons.close,
+                        size: Responsive.isMobile(context) ? 18 : 26,
+                        color: theme.iconTheme.color ?? Colors.grey,
+                      ),
                       onPressed: () => controller.deleteNotification(index),
                     ),
                   ],

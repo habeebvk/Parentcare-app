@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:parent_care/auth/auth_services.dart';
 import 'package:parent_care/screens/authentication/register.dart';
 import 'package:parent_care/screens/home_screen.dart';
-import 'package:parent_care/screens/into.dart';
 import 'package:parent_care/screens/widgets/auth_widget.dart';
+import 'package:parent_care/utility/responsive_helper.dart'; // <-- ADD THIS
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -54,63 +54,108 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    // -------- RESPONSIVE VALUES --------
+    double titleSize = Responsive.isMobile(context)
+        ? 28
+        : Responsive.isTablet(context)
+            ? 36
+            : 44;
+
+    double fieldSpacing = Responsive.isMobile(context)
+        ? 16
+        : Responsive.isTablet(context)
+            ? 20
+            : 24;
+
+    double buttonHeight = Responsive.isMobile(context)
+        ? 55
+        : Responsive.isTablet(context)
+            ? 60
+            : 65;
+
+    double horizontalPadding = Responsive.isMobile(context)
+        ? 24
+        : Responsive.isTablet(context)
+            ? 80
+            : 200;
+
     return Scaffold(
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: SingleChildScrollView(
             child: Column(
               children: [
+                // ---------- TITLE ----------
                 Text(
                   "Welcome Back",
                   style: GoogleFonts.poppins(
-                    fontSize: 28,
+                    fontSize: titleSize,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xffeb4034),
                   ),
                 ),
-                const SizedBox(height: 30),
 
+                SizedBox(height: fieldSpacing * 2),
+
+                // ---------- EMAIL ----------
                 AuthField(
                   hint: "Email Address",
-                  hintStyle: GoogleFonts.poppins(),
-                  textStyle: GoogleFonts.poppins(),
+                  hintStyle: GoogleFonts.poppins(
+                    fontSize: Responsive.isMobile(context) ? 14 : 18,
+                  ),
+                  textStyle: GoogleFonts.poppins(
+                    fontSize: Responsive.isMobile(context) ? 14 : 18,
+                  ),
                   onChanged: (v) => email = v,
                 ),
-                const SizedBox(height: 16),
 
+                SizedBox(height: fieldSpacing),
+
+                // ---------- PASSWORD ----------
                 AuthField(
                   hint: "Password",
                   isPassword: true,
-                  hintStyle: GoogleFonts.poppins(),
-                  textStyle: GoogleFonts.poppins(),
+                  hintStyle: GoogleFonts.poppins(
+                    fontSize: Responsive.isMobile(context) ? 14 : 18,
+                  ),
+                  textStyle: GoogleFonts.poppins(
+                    fontSize: Responsive.isMobile(context) ? 14 : 18,
+                  ),
                   onChanged: (v) => password = v,
                 ),
-                const SizedBox(height: 30),
 
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 55),
-                    backgroundColor: const Color(0xffeb4034),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                SizedBox(height: fieldSpacing * 2),
+
+                // ---------- LOGIN BUTTON ----------
+                SizedBox(
+                  width: double.infinity,
+                  height: buttonHeight,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffeb4034),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                     ),
-                  ),
-                  onPressed: isLoading ? null : login,
-                  child: isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                          "Login",
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
+                    onPressed: isLoading ? null : login,
+                    child: isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            "Login",
+                            style: GoogleFonts.poppins(
+                              fontSize: Responsive.isMobile(context) ? 18 : 22,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
+                  ),
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: fieldSpacing),
 
+                // ---------- REGISTER BUTTON ----------
                 TextButton(
                   onPressed: () {
                     Navigator.push(
@@ -123,10 +168,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Text(
                     "Don't have an account? Register",
                     style: GoogleFonts.poppins(
+                      fontSize: Responsive.isMobile(context) ? 14 : 18,
                       color: const Color(0xffeb4034),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
