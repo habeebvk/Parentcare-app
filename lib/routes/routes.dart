@@ -1,15 +1,20 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
-import 'package:parent_care/screens/alert_screen.dart';
-import 'package:parent_care/screens/appointment_screen.dart';
+import 'package:parent_care/screens/parent/alert_screen.dart';
+import 'package:parent_care/screens/parent/appointment_screen.dart';
 import 'package:parent_care/screens/authentication/login.dart';
 import 'package:parent_care/screens/authentication/register.dart';
-import 'package:parent_care/screens/cab_screen.dart';
-import 'package:parent_care/screens/grocery_screen.dart';
-import 'package:parent_care/screens/home_screen.dart';
-import 'package:parent_care/screens/hotel_screen.dart';
-import 'package:parent_care/screens/into.dart';
-import 'package:parent_care/screens/oldpeople_gallery.dart';
-import 'package:parent_care/screens/spashscreen.dart';
+import 'package:parent_care/screens/cab/cab_home.dart';
+import 'package:parent_care/screens/parent/cab_screen.dart';
+import 'package:parent_care/screens/grocery/grocery_home.dart';
+import 'package:parent_care/screens/parent/grocery_screen.dart';
+import 'package:parent_care/screens/parent/home_screen.dart';
+import 'package:parent_care/screens/hospital/home_page.dart';
+import 'package:parent_care/screens/hospital/hospitalNav.dart';
+import 'package:parent_care/screens/hotel/hotel_screen.dart';
+import 'package:parent_care/screens/parent/hotel_screen.dart';
+import 'package:parent_care/screens/parent/into.dart';
+import 'package:parent_care/screens/parent/oldpeople_gallery.dart';
+import 'package:parent_care/screens/parent/spashscreen.dart';
 
 class AppRoutes {
   static const intro = '/intro';
@@ -23,6 +28,11 @@ class AppRoutes {
   static const notification = '/notification';
   static const food = '/food';
   static const splash = "/splash";
+  static const hospital = "/hospital";
+  static const hospitalNav = "/hospitalNav";
+  static const cabHome = "/cabHome";
+  static const groceryHome = '/groceryHome';
+  static const foodOrder = '/foodOrder';
 
 
   static List<GetPage> pages = [
@@ -36,6 +46,11 @@ class AppRoutes {
     GetPage(name: grocery,page: () => GroceryScreen()),
     GetPage(name: notification,page: () => NotificationScreen()),
     GetPage(name: food,page: () => FoodOrderingScreen()),
-    GetPage(name: splash,page: () => SplashScreen())
+    GetPage(name: splash,page: () => SplashScreen()),
+    GetPage(name: hospital,page: () => HospitalHome()),
+    GetPage(name: hospitalNav,page: () => HospitalNav()),
+    GetPage(name: groceryHome,page: () => OrderSummaryScreen()),
+    GetPage(name: cabHome,page: () => CabHome()),
+    GetPage(name: foodOrder, page:() => FoodOrdersScreen())
   ];
 }

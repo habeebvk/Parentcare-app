@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:parent_care/auth/auth_services.dart';
 import 'package:parent_care/screens/authentication/login.dart';
-import 'package:parent_care/screens/into.dart';
+import 'package:parent_care/screens/parent/home_screen.dart';
+import 'package:parent_care/screens/parent/into.dart';
 import 'package:parent_care/screens/widgets/auth_widget.dart';
+import 'package:parent_care/services/api_service.dart';
 import 'package:parent_care/utility/responsive_helper.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -14,38 +15,40 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final FirebaseAuthServices _auth = FirebaseAuthServices();
 
+  // -----------------------------
+  final ApiService parentAuth = ApiService();
   String name = "";
   String email = "";
   String password = "";
   bool isLoading = false;
+  String selectedRole = "";
 
-  void register() async {
-    if (email.isEmpty || password.isEmpty || name.isEmpty) {
-      _showMessage("Please fill all fields");
-      return;
-    }
+final List<String> roles = ["Parent"]; // or remove dropdown completely
 
-    setState(() => isLoading = true);
 
-    try {
-      final user = await _auth.createUser(email.trim(), password.trim());
+void register() async {
+  setState(() => isLoading = true);
 
-      if (user != null) {
-        _showMessage("Account created!");
+  bool success = await parentAuth.register(
+    name.trim(),
+    email.trim(),
+    password.trim(),
+  );
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
-      }
-    } catch (error) {
-      _showMessage(error.toString());
-    }
+  setState(() => isLoading = false);
 
-    setState(() => isLoading = false);
+  if (success) {
+    _showMessage("Parent registered successfully");
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
+  } else {
+    _showMessage("Registration failed");
   }
+}
+
 
   void _showMessage(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -55,8 +58,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    // ---------- RESPONSIVE VALUES ------------
     double titleSize = Responsive.isMobile(context)
         ? 28
         : Responsive.isTablet(context)
@@ -128,6 +129,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 SizedBox(height: fieldSpacing),
 
+                // -------- ROLE --------
+                DropdownButtonFormField<String>(
+                  value: selectedRole.isEmpty ? null : selectedRole,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey.shade200,
+                    hintText: "Select Role",
+                    hintStyle: GoogleFonts.poppins(
+                      fontSize: Responsive.isMobile(context) ? 14 : 18,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  items: roles.map((role) {
+                    return DropdownMenuItem(
+                      value: role,
+                      child: Text(
+                        role,
+                        style: GoogleFonts.poppins(
+                          fontSize: Responsive.isMobile(context) ? 14 : 18,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() => selectedRole = value!);
+                  },
+                ),
+
+                SizedBox(height: fieldSpacing),
+
                 // -------- PASSWORD --------
                 AuthField(
                   hint: "Password",
@@ -176,9 +211,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const LoginScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
                     );
                   },
                   child: Text(

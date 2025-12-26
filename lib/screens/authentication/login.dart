@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:parent_care/auth/auth_services.dart';
 import 'package:parent_care/screens/authentication/register.dart';
-import 'package:parent_care/screens/home_screen.dart';
+import 'package:parent_care/screens/authentication/static_credentials.dart';
+import 'package:parent_care/screens/cab/cab_home.dart';
+import 'package:parent_care/screens/parent/home_screen.dart';
+import 'package:parent_care/screens/hospital/home_page.dart';
+import 'package:parent_care/screens/parent/into.dart';
 import 'package:parent_care/screens/widgets/auth_widget.dart';
-import 'package:parent_care/utility/responsive_helper.dart'; // <-- ADD THIS
+import 'package:parent_care/services/api_service.dart';
+import 'package:parent_care/services/google_auth.dart';
+import 'package:parent_care/utility/responsive_helper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,36 +21,102 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final FirebaseAuthServices _auth = FirebaseAuthServices();
 
+  // -------------------------
+  // REMOVE FIREBASE — Use Node API AuthService
+  // -------------------------
+
+  // final AuthService _auth = AuthService();  // <-- Your custom backend class
+  final GoogleAuthService googleAuth = GoogleAuthService();
+
+  final ApiService _authService = ApiService();
   String email = "";
   String password = "";
   bool isLoading = false;
+  String selectedRole = "";
 
-  void login() async {
-    if (email.isEmpty || password.isEmpty) {
-      _showMessage("Please enter email and password");
-      return;
-    }
+  final List<String> roles = [
+    'Parent',
+    "Hospital",
+    "Cab",
+    "Grocery",
+    "Hotel"
+  ];
 
-    setState(() => isLoading = true);
+final ApiService parentAuth = ApiService();
 
-    try {
-      final user = await _auth.loginUser(email.trim(), password.trim());
+void login() async {
+  if (email.isEmpty || password.isEmpty || selectedRole.isEmpty) {
+    _showMessage("Please fill all fields");
+    return;
+  }
 
-      if (user != null) {
-        _showMessage("Login Successful");
+  setState(() => isLoading = true);
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const NavScreen()),
-        );
-      }
-    } catch (error) {
-      _showMessage(error.toString());
-    }
+  /* ---------------- PARENT LOGIN (API) ---------------- */
+  if (selectedRole == "Parent") {
+    bool success = await parentAuth.login(
+      email.trim(),
+      password.trim(),
+    );
 
     setState(() => isLoading = false);
+
+    if (success) {
+      Get.offAllNamed('/home');
+    } else {
+      _showMessage("Invalid Parent credentials");
+    }
+    return;
+  }
+
+  /* ---------------- STATIC LOGIN ---------------- */
+  final staticUser = staticUsers[selectedRole];
+
+  setState(() => isLoading = false);
+
+  if (staticUser == null) {
+    _showMessage("Role not supported");
+    return;
+  }
+
+  if (email.trim() == staticUser['email'] &&
+      password.trim() == staticUser['password']) {
+
+    switch (selectedRole) {
+      case "Hospital":
+        Get.offAllNamed('/hospitalNav');
+        break;
+
+      case "Cab":
+        Get.offAllNamed('/cabHome');
+        break;
+
+      case "Grocery":
+        Get.offAllNamed('/groceryHome');
+        break;
+
+      case "Hotel":
+        Get.offAllNamed('/foodOrder');
+        break;
+    }
+  } else {
+    _showMessage("Invalid credentials");
+  }
+}
+
+  void googleLogin() async {
+    setState(() => isLoading = true);
+
+    final user = await googleAuth.signInWithGoogle();
+
+    setState(() => isLoading = false);
+
+    if (user != null) {
+      Get.toNamed('/home');
+    } else {
+      _showMessage("Google Sign-In failed");
+    }
   }
 
   void _showMessage(String message) {
@@ -54,8 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    // -------- RESPONSIVE VALUES --------
     double titleSize = Responsive.isMobile(context)
         ? 28
         : Responsive.isTablet(context)
@@ -126,7 +197,36 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: (v) => password = v,
                 ),
 
-                SizedBox(height: fieldSpacing * 2),
+                SizedBox(height: fieldSpacing),
+
+                // ---------- ROLE SELECTOR ----------
+                DropdownButtonFormField<String>(
+                  value: selectedRole.isEmpty ? null : selectedRole,
+                  decoration: const InputDecoration(
+                    hintText: "Select Role",
+                  ),
+                  dropdownColor: Theme.of(context).cardColor,
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  items: roles.map(
+                    (role) => DropdownMenuItem<String>(
+                      value: role,
+                      child: Text(
+                        role,
+                        style: GoogleFonts.poppins(
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
+                      ),
+                    ),
+                  ).toList(),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() => selectedRole = value);
+                  },
+                ),
+                SizedBox(height: fieldSpacing),
 
                 // ---------- LOGIN BUTTON ----------
                 SizedBox(
@@ -160,9 +260,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const RegisterScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
                     );
                   },
                   child: Text(
@@ -173,6 +271,34 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
+                SizedBox(height: fieldSpacing),
+// ---------- GOOGLE LOGIN BUTTON ----------
+                SizedBox(
+                  width: double.infinity,
+                  height: buttonHeight,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    onPressed: isLoading ? null : googleLogin,
+                    icon: Image.asset(
+                      "assets/gogle.png",
+                      height: 22,
+                    ),
+                    label: Text(
+                      "Continue with Google",
+                      style: GoogleFonts.poppins(
+                        fontSize: Responsive.isMobile(context) ? 16 : 18,
+                        color: Theme.of(context).textTheme.bodyLarge!.color,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+
               ],
             ),
           ),

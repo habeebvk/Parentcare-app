@@ -1,11 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:parent_care/controllers/item_controller.dart';
-import 'package:parent_care/model/store_model.dart';
+import '../model/store_model.dart';
+import '../model/grocery_item.dart';
+import '../services/api_service.dart';
 
 class GroceryController extends GetxController {
-  // ---------------- STORE LIST (Dummy Data) ----------------
+  // ---------------- Stores & Cart ----------------
   RxList<StoreModel> stores = <StoreModel>[
     StoreModel(
       id: "1",
@@ -14,7 +15,7 @@ class GroceryController extends GetxController {
       items: [
         GroceryItem(id: "i1", name: "Tomatoes", price: 30),
         GroceryItem(id: "i2", name: "Onions", price: 40),
-        GroceryItem(id: "i3", name: "Milk", price: 25),
+        GroceryItem(id: "i3", name: "Garlic", price: 35),
       ],
     ),
     StoreModel(
@@ -28,85 +29,119 @@ class GroceryController extends GetxController {
     ),
   ].obs;
 
-  // ---------------- STATE VARIABLES ----------------
   Rx<StoreModel?> selectedStore = Rx<StoreModel?>(null);
-  RxMap<String, int> cart = <String, int>{}.obs; // itemId → qty
+  RxMap<String, int> cart = <String, int>{}.obs;
   RxBool homeDelivery = false.obs;
 
-  // ---------------- SELECT STORE ----------------
+  // ---------------- Customer input ----------------
+  final nameController = TextEditingController();
+  final dropController = TextEditingController();
+  final dropFocus = FocusNode();
+  double? dropLat;
+  double? dropLng;
+
+  // ---------------- Orders ----------------
+  RxBool isLoading = false.obs;
+  RxList<dynamic> orders = <dynamic>[].obs;
+
+  // ---------------- Init ----------------
+  @override
+  void onInit() {
+    super.onInit();
+    fetchOrders(); // fetch orders from MongoDB/API
+  }
+
+  // ---------------- Store Selection ----------------
   void selectStore(StoreModel store) {
     selectedStore.value = store;
     cart.clear();
   }
 
-  // ---------------- ADD ITEM TO CART ----------------
+  // ---------------- Add to Cart ----------------
   void addToCart(GroceryItem item) {
-    if (cart.containsKey(item.id)) {
-      cart[item.id] = cart[item.id]! + 1;
-    } else {
-      cart[item.id] = 1;
-    }
+    cart[item.id] = (cart[item.id] ?? 0) + 1;
   }
 
-  // ---------------- TOTAL PRICE ----------------
+  // ---------------- Total Price ----------------
   double get total {
     double sum = 0;
-
     cart.forEach((itemId, qty) {
-      final item =
-          selectedStore.value!.items.firstWhere((element) => element.id == itemId);
+      final item = selectedStore.value!.items.firstWhere((e) => e.id == itemId);
       sum += item.price * qty;
     });
-
     if (homeDelivery.value) sum += 20;
-
     return sum;
   }
 
-  // ---------------- FIREBASE SAVE ORDER ----------------
+  // ---------------- Confirm Order ----------------
   Future<void> confirmOrder() async {
-    if (selectedStore.value == null || cart.isEmpty) {
-      Get.snackbar("Error", "Please add items to the cart!");
+    if (selectedStore.value == null ||
+        cart.isEmpty ||
+        nameController.text.isEmpty ||
+        dropController.text.isEmpty) {
+      Get.snackbar("Error", "Complete all fields");
       return;
     }
 
+    final items = cart.entries.map((entry) {
+      final item = selectedStore.value!.items.firstWhere((e) => e.id == entry.key);
+      return {
+        "id": item.id,
+        "name": item.name,
+        "price": item.price,
+        "quantity": entry.value,
+        "total": item.price * entry.value,
+      };
+    }).toList();
+
+    final orderData = {
+      "name": nameController.text,
+      "dropLocation": dropController.text,
+      "latitude": dropLat,
+      "longitude": dropLng,
+      "storeName": selectedStore.value!.name,
+      "items": items,
+      "homeDelivery": homeDelivery.value,
+      "totalAmount": total,
+    };
+
+
     try {
-      // Convert cart → Firebase-friendly format
-      List<Map<String, dynamic>> itemsList = cart.entries.map((entry) {
-        final item = selectedStore.value!.items
-            .firstWhere((element) => element.id == entry.key);
+      await ApiService.placeOrder(orderData);
+      Get.snackbar("Success", "Order placed successfully");
 
-        return {
-          "id": item.id,
-          "name": item.name,
-          "price": item.price,
-          "quantity": entry.value,
-          "total": item.price * entry.value
-        };
-      }).toList();
-
-      await FirebaseFirestore.instance.collection("grocery_orders").add({
-        "store_id": selectedStore.value!.id,
-        "store_name": selectedStore.value!.name,
-        "items": itemsList,
-        "home_delivery": homeDelivery.value,
-        "total_price": total,
-        "createdAt": Timestamp.now(),
-      });
-
-      // Show dialog
-      Get.defaultDialog(
-        title: "Order Confirmed",
-        middleText: "Your grocery order has been placed successfully!",
-      );
-
-      // Reset after order
-      selectedStore.value = null;
+      // Reset
       cart.clear();
+      selectedStore.value = null;
       homeDelivery.value = false;
+      nameController.clear();
+      dropController.clear();
 
+      // Refresh orders
+      fetchOrders();
     } catch (e) {
       Get.snackbar("Error", e.toString());
     }
+  }
+
+  // ---------------- Fetch Orders ----------------
+  Future<void> fetchOrders() async {
+    try {
+      isLoading.value = true;
+      final fetchedOrders = await ApiService.fetchOrders();
+      orders.value = fetchedOrders;
+    } catch (e) {
+      Get.snackbar("Error", "Failed to fetch orders");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    dropController.dispose();
+    dropFocus.dispose();
+    super.onClose();
   }
 }

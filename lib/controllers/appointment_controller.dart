@@ -1,5 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:parent_care/model/appointment_model.dart';
+import 'package:parent_care/model/hospital_model.dart';
+import 'package:parent_care/services/api_service.dart';
 
 // Hospital model
 class Hospital {
@@ -14,14 +17,20 @@ class Hospital {
   });
 }
 
+
 class AppointmentController extends GetxController {
-  // Observables
+  TextEditingController nameController = TextEditingController();
+  // ---------------- HOSPITAL ----------------
   RxList<Hospital> hospitals = <Hospital>[].obs;
   Rx<Hospital?> selectedHospital = Rx<Hospital?>(null);
 
+  // ---------------- DATE ----------------
+  TextEditingController dateController = TextEditingController();
   RxString selectedDate = "".obs;
+
+  // ---------------- TIME ----------------
+  TextEditingController timeController = TextEditingController();
   RxString selectedTime = "".obs;
-  RxString tokenNumber = "".obs;
 
   @override
   void onInit() {
@@ -29,78 +38,91 @@ class AppointmentController extends GetxController {
     loadHospitals();
   }
 
-  /// Load hospitals from Firebase, fallback to dummy data if Firestore empty
-  void loadHospitals() async {
-    try {
-      final snapshot =
-          await FirebaseFirestore.instance.collection("hospitals").get();
-
-      if (snapshot.docs.isNotEmpty) {
-        hospitals.value = snapshot.docs.map((e) {
-          return Hospital(
-            id: e.id,
-            name: e['name'],
-            address: e['address'] ?? "",
-          );
-        }).toList();
-
-        selectedHospital.value = hospitals.first;
-      } else {
-        // FALLBACK: Dummy hospitals
-        hospitals.value = [
-          Hospital(id: "1", name: "City Hospital", address: "Main Road"),
-          Hospital(id: "2", name: "Lotus Medical Center", address: "Lake View"),
-          Hospital(id: "3", name: "Sunrise Hospital", address: "Highway"),
-        ];
-        selectedHospital.value = hospitals.first;
-      }
-    } catch (e) {
-      // If Firebase fails, load dummy hospitals
-      hospitals.value = [
-        Hospital(id: "1", name: "City Hospital", address: "Main Road"),
-        Hospital(id: "2", name: "Lotus Medical Center", address: "Lake View"),
-        Hospital(id: "3", name: "Sunrise Hospital", address: "Highway"),
-      ];
-      selectedHospital.value = hospitals.first;
-    }
+  // ---------------- LOAD HOSPITALS ----------------
+  void loadHospitals() {
+    hospitals.value = [
+      Hospital(id: "1", name: "City Hospital"),
+      Hospital(id: "2", name: "Lotus Medical Center"),
+      Hospital(id: "3", name: "Sunrise Hospital"),
+    ];
+    selectedHospital.value = hospitals.first;
   }
 
-  /// Select a hospital
   void selectHospital(Hospital hospital) {
     selectedHospital.value = hospital;
   }
 
-  /// Save appointment to Firestore + show dialog
-  Future<void> bookAppointment() async {
+  // ---------------- DATE PICKER ----------------
+  Future<void> pickDate(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+      initialDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      selectedDate.value = "${picked.day}-${picked.month}-${picked.year}";
+      dateController.text = selectedDate.value;
+    }
+  }
+
+  // ---------------- TIME PICKER ----------------
+  Future<void> pickTime(BuildContext context) async {
+    TimeOfDay? picked =
+        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+
+    if (picked != null) {
+      selectedTime.value =
+          "${picked.hour}:${picked.minute.toString().padLeft(2, '0')}";
+      timeController.text = selectedTime.value;
+    }
+  }
+
+  // ---------------- BOOK APPOINTMENT ----------------
+  void bookAppointment() {
     if (selectedHospital.value == null ||
         selectedDate.value.isEmpty ||
-        selectedTime.value.isEmpty) {
+        selectedTime.value.isEmpty ||
+        nameController.text.isEmpty
+        ) {
       Get.snackbar("Error", "Please fill all details");
       return;
     }
 
-    // Generate token number
-    tokenNumber.value =
-        "TOK-${DateTime.now().millisecondsSinceEpoch % 1000}";
+    final pdata = {
+      "name": nameController.text,
+      "hospital": selectedHospital.value!.name,
+      "date": selectedDate.value,
+      "time": selectedTime.value,
+    };
 
-    try {
-      await FirebaseFirestore.instance.collection("appointments").add({
-        "hospitalId": selectedHospital.value!.id,
-        "hospitalName": selectedHospital.value!.name,
-        "date": selectedDate.value,
-        "time": selectedTime.value,
-        "token": tokenNumber.value,
-        "createdAt": Timestamp.now(),
-      });
+    ApiService.addData(pdata);
+  }
+}
 
-      // Show confirmation dialog
-      Get.defaultDialog(
-        title: "Appointment Confirmed",
-        middleText:
-            "Hospital: ${selectedHospital.value!.name}\nDate: ${selectedDate.value}\nTime: ${selectedTime.value}\n\nYour Token: ${tokenNumber.value}",
-      );
-    } catch (e) {
-      Get.snackbar("Error", e.toString());
+
+class CancelAppointmentController extends GetxController {
+  RxList<Appointment> appointments = <Appointment>[].obs;
+  RxBool isLoading = true.obs;
+
+  @override
+  void onInit() {
+    fetchApproved();
+    super.onInit();
+  }
+
+  Future<void> fetchApproved() async {
+    isLoading.value = true;
+    appointments.value = await ApiService.getApprovedAppointments();
+    isLoading.value = false;
+  }
+
+  Future<void> cancel(String id) async {
+    final success = await ApiService.cancelAppointment(id);
+    if (success) {
+      appointments.removeWhere((a) => a.id == id);
+      Get.snackbar("Cancelled", "Appointment cancelled");
     }
   }
 }

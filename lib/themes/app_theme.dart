@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class AppThemes {
@@ -10,6 +12,16 @@ class AppThemes {
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       elevation: 0,
+    ),
+
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xffeb4034),
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
     ),
 
     inputDecorationTheme: InputDecorationTheme(
@@ -31,6 +43,16 @@ class AppThemes {
       backgroundColor: Color(0xFF121212),
       foregroundColor: Colors.white,
       elevation: 0,
+    ),
+
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xffeb4034),
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
     ),
 
     inputDecorationTheme: InputDecorationTheme(

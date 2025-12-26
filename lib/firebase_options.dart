@@ -41,46 +41,47 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyATKkCoULKHbWW2gb_gxkHLT9_gpn5E8Ns',
-    appId: '1:824088659284:web:6f890408d1d1c2199eb4c1',
-    messagingSenderId: '824088659284',
-    projectId: 'parent-care-project',
-    authDomain: 'parent-care-project.firebaseapp.com',
-    storageBucket: 'parent-care-project.firebasestorage.app',
+    apiKey: 'AIzaSyDM1HXrz-gErhyoXBWbHIGTpwAUz1bcHM4',
+    appId: '1:409183344836:web:9d44b67b62fe4c2d229191',
+    messagingSenderId: '409183344836',
+    projectId: 'my-parentcare-app',
+    authDomain: 'my-parentcare-app.firebaseapp.com',
+    storageBucket: 'my-parentcare-app.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB9xPxX58nKJV4NAn2FTonnDKWCnJHIZ_I',
-    appId: '1:824088659284:android:cb1ba7f5b9916c9e9eb4c1',
-    messagingSenderId: '824088659284',
-    projectId: 'parent-care-project',
-    storageBucket: 'parent-care-project.firebasestorage.app',
+    apiKey: 'AIzaSyCQ1uY-vodAGMXhNdsw-Xzu3pi0WfbEHP8',
+    appId: '1:409183344836:android:267a51011b6fd1f7229191',
+    messagingSenderId: '409183344836',
+    projectId: 'my-parentcare-app',
+    storageBucket: 'my-parentcare-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCR1e24mL_AG66TQkJOIw8mjL59T5Y6q6c',
-    appId: '1:824088659284:ios:99a2fd1e9b67aa4b9eb4c1',
-    messagingSenderId: '824088659284',
-    projectId: 'parent-care-project',
-    storageBucket: 'parent-care-project.firebasestorage.app',
+    apiKey: 'AIzaSyDmf9_w6wcka5FGvHVOKS9eou_gDS3sS1M',
+    appId: '1:409183344836:ios:0035aaa73a8071ec229191',
+    messagingSenderId: '409183344836',
+    projectId: 'my-parentcare-app',
+    storageBucket: 'my-parentcare-app.firebasestorage.app',
     iosBundleId: 'com.example.parentCare',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCR1e24mL_AG66TQkJOIw8mjL59T5Y6q6c',
-    appId: '1:824088659284:ios:99a2fd1e9b67aa4b9eb4c1',
-    messagingSenderId: '824088659284',
-    projectId: 'parent-care-project',
-    storageBucket: 'parent-care-project.firebasestorage.app',
+    apiKey: 'AIzaSyDmf9_w6wcka5FGvHVOKS9eou_gDS3sS1M',
+    appId: '1:409183344836:ios:0035aaa73a8071ec229191',
+    messagingSenderId: '409183344836',
+    projectId: 'my-parentcare-app',
+    storageBucket: 'my-parentcare-app.firebasestorage.app',
     iosBundleId: 'com.example.parentCare',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyATKkCoULKHbWW2gb_gxkHLT9_gpn5E8Ns',
-    appId: '1:824088659284:web:7eb1202d769574939eb4c1',
-    messagingSenderId: '824088659284',
-    projectId: 'parent-care-project',
-    authDomain: 'parent-care-project.firebaseapp.com',
-    storageBucket: 'parent-care-project.firebasestorage.app',
+    apiKey: 'AIzaSyDM1HXrz-gErhyoXBWbHIGTpwAUz1bcHM4',
+    appId: '1:409183344836:web:e6b0ee357de3daeb229191',
+    messagingSenderId: '409183344836',
+    projectId: 'my-parentcare-app',
+    authDomain: 'my-parentcare-app.firebaseapp.com',
+    storageBucket: 'my-parentcare-app.firebasestorage.app',
   );
+
 }

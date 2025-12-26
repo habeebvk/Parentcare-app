@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "824088659284",
-    "project_id": "parent-care-project",
-    "storage_bucket": "parent-care-project.firebasestorage.app"
+    "project_number": "409183344836",
+    "project_id": "my-parentcare-app",
+    "storage_bucket": "my-parentcare-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:824088659284:android:cb1ba7f5b9916c9e9eb4c1",
+        "mobilesdk_app_id": "1:409183344836:android:267a51011b6fd1f7229191",
         "android_client_info": {
           "package_name": "com.example.parent_care"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB9xPxX58nKJV4NAn2FTonnDKWCnJHIZ_I"
+          "current_key": "AIzaSyCQ1uY-vodAGMXhNdsw-Xzu3pi0WfbEHP8"
         }
       ],
       "services": {
