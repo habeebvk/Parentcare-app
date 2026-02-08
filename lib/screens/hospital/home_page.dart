@@ -8,7 +8,7 @@ class HospitalHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HospitalController controller = Get.put(HospitalController());
+    final HospitalController controller = Get.find<HospitalController>();
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final Color actionBgColor = isDark ? Colors.white : Colors.black;
     final Color iconColor = isDark ? Colors.black : Colors.white;
@@ -26,9 +26,12 @@ class HospitalHome extends StatelessWidget {
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         actions: [
-          IconButton(onPressed: (){
-            Get.toNamed('/login');
-          }, icon: Icon(Icons.logout))
+          IconButton(
+            onPressed: () {
+              Get.toNamed('/login');
+            },
+            icon: Icon(Icons.logout),
+          ),
         ],
       ),
       body: Padding(
@@ -94,31 +97,25 @@ class HospitalHome extends StatelessWidget {
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  actionBgColor,
+                              backgroundColor: actionBgColor,
                               minimumSize: Size(100, buttonHeight),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadiusGeometry.circular(30)
-                              )
+                                borderRadius: BorderRadiusGeometry.circular(30),
+                              ),
                             ),
                             onPressed: () {
                               controller.approveRequest(req.id);
                             },
                             child: Text(
                               "Approve",
-                              style: GoogleFonts.poppins(
-                                color: iconColor,
-                              ),
+                              style: GoogleFonts.poppins(color: iconColor),
                             ),
                           ),
                           const SizedBox(width: 12),
                           OutlinedButton(
                             style: OutlinedButton.styleFrom(
-                              foregroundColor:
-                                  theme.colorScheme.error,
-                              side: BorderSide(
-                                color: theme.colorScheme.error,
-                              ),
+                              foregroundColor: theme.colorScheme.error,
+                              side: BorderSide(color: theme.colorScheme.error),
                               minimumSize: Size(100, buttonHeight),
                             ),
                             onPressed: () {

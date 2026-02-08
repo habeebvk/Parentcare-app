@@ -7,17 +7,23 @@ import 'package:parent_care/model/grocery_model.dart';
 class OrderSummaryScreen extends StatelessWidget {
   OrderSummaryScreen({super.key});
 
-  final GroceryController controller = Get.put(GroceryController());
+  final GroceryController controller = Get.find<GroceryController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Orders", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+        title: Text(
+          "Orders",
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+        ),
         actions: [
-          IconButton(onPressed: (){
-            Get.toNamed('/login');
-          }, icon: Icon(Icons.logout))
+          IconButton(
+            onPressed: () {
+              Get.toNamed('/login');
+            },
+            icon: Icon(Icons.logout),
+          ),
         ],
       ),
       body: Obx(() {
@@ -37,7 +43,9 @@ class OrderSummaryScreen extends StatelessWidget {
 
             return Card(
               margin: const EdgeInsets.only(bottom: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -45,8 +53,13 @@ class OrderSummaryScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Header: Store Name
-                    Text(order.storeName,
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                      order.storeName,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
 
                     const SizedBox(height: 6),
 
@@ -54,50 +67,91 @@ class OrderSummaryScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Customer: ${order.name}",
-                            style: const TextStyle(fontSize: 14, color: Colors.black87)),
-                        Text("Total: ₹${order.totalAmount}",
-                            style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green)),
+                        Text(
+                          "Customer: ${order.name}",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Text(
+                          "Total: ₹${order.totalAmount}",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
                       ],
                     ),
 
                     const SizedBox(height: 4),
-                    Text("Location: ${order.dropLocation}",
-                        style: const TextStyle(fontSize: 14, color: Colors.black87)),
+                    Text(
+                      "Location: ${order.dropLocation}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                      ),
+                    ),
 
                     const Divider(height: 20, thickness: 1),
 
                     // Ordered Items Header
                     Row(
                       children: const [
-                        Expanded(flex: 4, child: Text("Item", style: TextStyle(fontWeight: FontWeight.bold))),
-                        Expanded(flex: 2, child: Text("Qty", style: TextStyle(fontWeight: FontWeight.bold))),
-                        Expanded(flex: 2, child: Text("Price", style: TextStyle(fontWeight: FontWeight.bold))),
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            "Item",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "Qty",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "Price",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 6),
 
                     // List of Items
-                    ...order.items.map((item) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2),
-                          child: Row(
-                            children: [
-                              Expanded(flex: 4, child: Text(item.name)),
-                              Expanded(flex: 2, child: Text("${item.quantity}")),
-                              Expanded(flex: 2, child: Text("₹${item.price * item.quantity}")),
-                            ],
-                          ),
-                        )),
+                    ...order.items.map(
+                      (item) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: Row(
+                          children: [
+                            Expanded(flex: 4, child: Text(item.name)),
+                            Expanded(flex: 2, child: Text("${item.quantity}")),
+                            Expanded(
+                              flex: 2,
+                              child: Text("₹${item.price * item.quantity}"),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
                     // Optional: Home Delivery
                     if (order.homeDelivery)
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
-                        child: Text("Home Delivery Applied (₹20)",
-                            style: TextStyle(color: Colors.orange.shade800, fontWeight: FontWeight.w500)),
+                        child: Text(
+                          "Home Delivery Applied (₹20)",
+                          style: TextStyle(
+                            color: Colors.orange.shade800,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                   ],
                 ),

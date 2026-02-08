@@ -7,8 +7,7 @@ import 'package:parent_care/utility/responsive_helper.dart';
 class NotificationScreen extends StatelessWidget {
   NotificationScreen({super.key});
 
-  final NotificationController controller =
-      Get.put(NotificationController());
+  final NotificationController controller = Get.find<NotificationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +34,17 @@ class NotificationScreen extends StatelessWidget {
             color: theme.appBarTheme.foregroundColor ?? theme.primaryColor,
           ),
         ),
-        backgroundColor: theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
-        foregroundColor: theme.appBarTheme.foregroundColor ?? theme.primaryColor,
+        backgroundColor:
+            theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
+        foregroundColor:
+            theme.appBarTheme.foregroundColor ?? theme.primaryColor,
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.delete_sweep,
-                size: Responsive.isMobile(context) ? 22 : 30),
+            icon: Icon(
+              Icons.delete_sweep,
+              size: Responsive.isMobile(context) ? 22 : 30,
+            ),
             onPressed: controller.clearAll,
           ),
         ],
@@ -121,7 +124,9 @@ class NotificationScreen extends StatelessWidget {
                               color: theme.textTheme.bodyLarge!.color,
                             ),
                           ),
-                          SizedBox(height: Responsive.isMobile(context) ? 6 : 10),
+                          SizedBox(
+                            height: Responsive.isMobile(context) ? 6 : 10,
+                          ),
 
                           Text(
                             item.message,
@@ -130,7 +135,9 @@ class NotificationScreen extends StatelessWidget {
                               color: theme.textTheme.bodyMedium!.color,
                             ),
                           ),
-                          SizedBox(height: Responsive.isMobile(context) ? 8 : 12),
+                          SizedBox(
+                            height: Responsive.isMobile(context) ? 8 : 12,
+                          ),
 
                           Text(
                             item.time,

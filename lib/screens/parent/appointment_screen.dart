@@ -9,7 +9,7 @@ class AppointmentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppointmentController controller = Get.put(AppointmentController());
+    final AppointmentController controller = Get.find<AppointmentController>();
     final theme = Theme.of(context);
 
     final width = MediaQuery.of(context).size.width;
@@ -45,7 +45,7 @@ class AppointmentScreen extends StatelessWidget {
         body: TabBarView(
           children: [
             _buildBookingForm(context, controller, width),
-            CancelAppointment()
+            CancelAppointment(),
           ],
         ),
       ),
@@ -55,8 +55,11 @@ class AppointmentScreen extends StatelessWidget {
   // ---------------------------------------------
   // TAB 1 : BOOKING FORM (Your Existing UI)
   // ---------------------------------------------
-  Widget _buildBookingForm(BuildContext context,
-      AppointmentController controller, double width) {
+  Widget _buildBookingForm(
+    BuildContext context,
+    AppointmentController controller,
+    double width,
+  ) {
     double sectionTitleSize = width < 500 ? 18 : 22;
     double inputFontSize = width < 500 ? 15 : 17;
     double padding = width < 500 ? 20 : 30;
@@ -83,7 +86,7 @@ class AppointmentScreen extends StatelessWidget {
             TextField(
               controller: controller.nameController,
               decoration: InputDecoration(
-                hint: Text("Enter Name",style: GoogleFonts.poppins()),
+                hint: Text("Enter Name", style: GoogleFonts.poppins()),
                 suffixIcon: Icon(Icons.person),
               ),
             ),
@@ -140,8 +143,8 @@ class AppointmentScreen extends StatelessWidget {
               controller: controller.dateController,
               onTap: () => controller.pickDate(context),
               decoration: InputDecoration(
-                hint: Text("Enter Date",style: GoogleFonts.poppins(),),
-                suffixIcon: Icon(Icons.calendar_month)
+                hint: Text("Enter Date", style: GoogleFonts.poppins()),
+                suffixIcon: Icon(Icons.calendar_month),
               ),
             ),
             SizedBox(height: spacing * 2),
@@ -161,8 +164,8 @@ class AppointmentScreen extends StatelessWidget {
               readOnly: true,
               onTap: () => controller.pickTime(context),
               decoration: InputDecoration(
-                hint: Text("Enter Time",style: GoogleFonts.poppins()),
-                suffixIcon: Icon(Icons.timer)
+                hint: Text("Enter Time", style: GoogleFonts.poppins()),
+                suffixIcon: Icon(Icons.timer),
               ),
             ),
             SizedBox(height: spacing * 3),

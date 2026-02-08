@@ -4,17 +4,23 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:parent_care/controllers/food_controller.dart';
 
 class FoodOrdersScreen extends StatelessWidget {
-  final controller = Get.put(FoodOrdersController());
+  final controller = Get.find<FoodOrdersController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Food Orders",style: GoogleFonts.poppins(fontWeight: FontWeight.bold),),
+        title: Text(
+          "Food Orders",
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+        ),
         actions: [
-          IconButton(onPressed: (){
-            Get.toNamed('/login');
-          }, icon: Icon(Icons.logout))
+          IconButton(
+            onPressed: () {
+              Get.toNamed('/login');
+            },
+            icon: Icon(Icons.logout),
+          ),
         ],
       ),
 
@@ -115,8 +121,7 @@ class FoodOrdersScreen extends StatelessWidget {
                           (item) => Padding(
                             padding: const EdgeInsets.symmetric(vertical: 6),
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   item.name,

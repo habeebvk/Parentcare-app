@@ -25,11 +25,14 @@ class CabHome extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-         actions: [
-          IconButton(onPressed: (){
-            Get.toNamed('/login');
-          }, icon: Icon(Icons.logout))
-        ],
+          actions: [
+            IconButton(
+              onPressed: () {
+                Get.toNamed('/login');
+              },
+              icon: Icon(Icons.logout),
+            ),
+          ],
           bottom: TabBar(
             labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500),
             tabs: const [
@@ -38,12 +41,7 @@ class CabHome extends StatelessWidget {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            CabRequest(),
-            CabList(),
-          ],
-        ),
+        body: TabBarView(children: [CabRequest(), CabList()]),
       ),
     );
   }
@@ -57,7 +55,7 @@ class CabList extends StatefulWidget {
 }
 
 class _CabListState extends State<CabList> {
-  final controller = Get.put(CabBookingController());
+  final controller = Get.find<CabBookingController>();
 
   @override
   Widget build(BuildContext context) {
@@ -89,9 +87,8 @@ class _CabListState extends State<CabList> {
             margin: const EdgeInsets.only(bottom: 15),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(15),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Left Column
                   Column(
@@ -100,9 +97,14 @@ class _CabListState extends State<CabList> {
                       Text(
                         "Name: ${cab.name}",
                         style: GoogleFonts.poppins(
-                            fontSize: 16, fontWeight: FontWeight.w500),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                      Text("Pickup: ${cab.pickup}", style: GoogleFonts.poppins()),
+                      Text(
+                        "Pickup: ${cab.pickup}",
+                        style: GoogleFonts.poppins(),
+                      ),
                       Text("Drop: ${cab.drop}", style: GoogleFonts.poppins()),
                       Text(
                         "Time: ${cab.time.hour.toString().padLeft(2, '0')}:${cab.time.minute.toString().padLeft(2, '0')}",
@@ -114,11 +116,11 @@ class _CabListState extends State<CabList> {
                       ),
                     ],
                   ),
-
+              
                   // Optional Action button
                   GestureDetector(
-                    onTap: (){
-                       InvoiceGenerator.generateAndOpenInvoice(cab);
+                    onTap: () {
+                      InvoiceGenerator.generateAndOpenInvoice(cab);
                     },
                     child: Container(
                       width: 45,
@@ -139,13 +141,3 @@ class _CabListState extends State<CabList> {
     });
   }
 }
-
-
-
-
-
-
-
-
-
-

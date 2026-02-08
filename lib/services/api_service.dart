@@ -6,7 +6,7 @@ import 'package:parent_care/model/food_order.dart';
 import 'package:parent_care/model/grocery_model.dart';
 
 class ApiService {
-  static const baseUrl = "http://192.168.1.54:5000/api/";
+  static const baseUrl = "http://192.168.1.12:5000/api/";
 
 
       Future<bool> register(String name, String email, String password) async {

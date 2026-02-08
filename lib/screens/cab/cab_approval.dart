@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:parent_care/controllers/cab_controller.dart';
 
 class CabRequest extends StatelessWidget {
-  final controller = Get.put(CabBookingController());
+  final controller = Get.find<CabBookingController>();
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +33,29 @@ class CabRequest extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Name: ${cab.name}", style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16)),
-                    Text("Pickup: ${cab.pickup}",style: GoogleFonts.poppins(),),
-                    Text("Drop: ${cab.drop}",style: GoogleFonts.poppins(),),
-                    Text("Time: ${cab.time.hour.toString().padLeft(2,'0')}:${cab.time.minute.toString().padLeft(2,'0')}",style: GoogleFonts.poppins(),),
-                    Text("Status: ${cab.status}", style: GoogleFonts.poppins(
-                      color: cab.status == "pending" ? Colors.orange :
-                             cab.status == "approved" ? Colors.green : Colors.red
-                    )),
+                    Text(
+                      "Name: ${cab.name}",
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text("Pickup: ${cab.pickup}", style: GoogleFonts.poppins()),
+                    Text("Drop: ${cab.drop}", style: GoogleFonts.poppins()),
+                    Text(
+                      "Time: ${cab.time.hour.toString().padLeft(2, '0')}:${cab.time.minute.toString().padLeft(2, '0')}",
+                      style: GoogleFonts.poppins(),
+                    ),
+                    Text(
+                      "Status: ${cab.status}",
+                      style: GoogleFonts.poppins(
+                        color: cab.status == "pending"
+                            ? Colors.orange
+                            : cab.status == "approved"
+                            ? Colors.green
+                            : Colors.red,
+                      ),
+                    ),
                     const SizedBox(height: 10),
                     if (cab.status == "pending")
                       Row(
@@ -48,14 +63,21 @@ class CabRequest extends StatelessWidget {
                         children: [
                           ElevatedButton(
                             onPressed: () => controller.approve(cab.id),
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                            child: Text("Accept",style: GoogleFonts.poppins(),),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                            ),
+                            child: Text("Accept", style: GoogleFonts.poppins()),
                           ),
                           const SizedBox(width: 10),
                           ElevatedButton(
                             onPressed: () => controller.reject(cab.id),
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                            child: Text("Decline",style: GoogleFonts.poppins()),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            child: Text(
+                              "Decline",
+                              style: GoogleFonts.poppins(),
+                            ),
                           ),
                         ],
                       ),

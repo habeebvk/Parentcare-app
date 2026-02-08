@@ -14,7 +14,7 @@ class CabScreen extends StatefulWidget {
 }
 
 class _CabScreenState extends State<CabScreen> {
-  final controller = Get.put(CabBookingController());
+  final controller = Get.find<CabBookingController>();
 
   @override
   Widget build(BuildContext context) {
@@ -51,25 +51,32 @@ class _CabScreenState extends State<CabScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Left Column
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Name: ${cab.name}",
-                        style: GoogleFonts.poppins(
-                            fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      Text("Pickup: ${cab.pickup}", style: GoogleFonts.poppins()),
-                      Text("Drop: ${cab.drop}", style: GoogleFonts.poppins()),
-                      Text(
-                        "Time: ${cab.time.hour.toString().padLeft(2, '0')}:${cab.time.minute.toString().padLeft(2, '0')}",
-                        style: GoogleFonts.poppins(),
-                      ),
-                      Text(
-                        "Status: ${cab.status}",
-                        style: GoogleFonts.poppins(color: Colors.green),
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Name: ${cab.name}",
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          "Pickup: ${cab.pickup}",
+                          style: GoogleFonts.poppins(),
+                        ),
+                        Text("Drop: ${cab.drop}", style: GoogleFonts.poppins()),
+                        Text(
+                          "Time: ${cab.time.hour.toString().padLeft(2, '0')}:${cab.time.minute.toString().padLeft(2, '0')}",
+                          style: GoogleFonts.poppins(),
+                        ),
+                        Text(
+                          "Status: ${cab.status}",
+                          style: GoogleFonts.poppins(color: Colors.green),
+                        ),
+                      ],
+                    ),
                   ),
 
                   // Optional Action button
@@ -86,8 +93,8 @@ class _CabScreenState extends State<CabScreen> {
                       ),
                       child: Icon(Icons.download, color: iconColor),
                     ),
-                    ),
-                ]
+                  ),
+                ],
               ),
             ),
           );

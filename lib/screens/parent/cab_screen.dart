@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-
 class CabMainScreen extends StatelessWidget {
   const CabMainScreen({super.key});
 
@@ -34,30 +33,18 @@ class CabMainScreen extends StatelessWidget {
           centerTitle: true,
           bottom: TabBar(
             indicatorColor: const Color(0xffeb4034),
-            labelStyle: GoogleFonts.poppins(
-              fontWeight: FontWeight.w600,
-            ),
+            labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
             tabs: const [
               Tab(icon: Icon(Icons.local_taxi), text: "Cab Book"),
               Tab(icon: Icon(Icons.list_alt), text: "Bookings"),
             ],
           ),
         ),
-        body:  TabBarView(
-          children: [
-            CabBookingScreen(),
-            CabScreen(),
-          ],
-        ),
+        body: TabBarView(children: [CabBookingScreen(), CabScreen()]),
       ),
     );
   }
 }
-
-
-
-
-
 
 class CabBookingScreen extends StatefulWidget {
   CabBookingScreen({super.key});
@@ -67,7 +54,7 @@ class CabBookingScreen extends StatefulWidget {
 }
 
 class _CabBookingScreenState extends State<CabBookingScreen> {
-  final controller = Get.put(CabBookingController());
+  final controller = Get.find<CabBookingController>();
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +63,7 @@ class _CabBookingScreenState extends State<CabBookingScreen> {
     // ------------ RESPONSIVE VALUES ------------
     final width = MediaQuery.of(context).size.width;
 
-      double sectionTitleSize = width < 500 ? 18 : 22;
+    double sectionTitleSize = width < 500 ? 18 : 22;
     double inputFontSize = width < 500 ? 15 : 17;
     double padding = width < 500 ? 20 : 30;
     double spacing = width < 500 ? 12 : 20;
@@ -101,17 +88,17 @@ class _CabBookingScreenState extends State<CabBookingScreen> {
                 ),
               ),
               SizedBox(height: spacing),
-      
+
               TextField(
                 controller: controller.nameController,
                 focusNode: controller.nameFocus,
                 decoration: InputDecoration(
-                  hint: Text("Enter Name",style: GoogleFonts.poppins()),
+                  hint: Text("Enter Name", style: GoogleFonts.poppins()),
                   suffixIcon: Icon(Icons.person),
                 ),
               ),
               SizedBox(height: spacing * 2),
-      
+
               // -------- Select Date ----------
               Text(
                 "Enter Pickup Location",
@@ -121,49 +108,46 @@ class _CabBookingScreenState extends State<CabBookingScreen> {
                 ),
               ),
               SizedBox(height: spacing),
-          GooglePlaceAutoCompleteTextField(
-            textEditingController: controller.pickupController,
-            focusNode: controller.pickupFocus,
-            googleAPIKey: "AIzaSyCnXk2YpbWjr5UgTFFflUgfDsagIqwwObE",
-            inputDecoration: InputDecoration(
-              hintText: "Pickup Location",
-              suffixIcon: const Icon(Icons.location_on),
-            ),
-            debounceTime: 600,
-            countries: const ["in"], // India only (optional)
-            isLatLngRequired: true,
-            getPlaceDetailWithLatLng: (Prediction prediction) {
-              controller.pickupLat =
-                  double.tryParse(prediction.lat ?? "");
-              controller.pickupLng =
-                  double.tryParse(prediction.lng ?? "");
-            },
-
-            itemClick: (Prediction prediction) {
-              controller.pickupController.text =
-                  prediction.description ?? "";
-              controller.pickupController.selection =
-                  TextSelection.fromPosition(
-                TextPosition(
-                  offset: controller.pickupController.text.length,
+              GooglePlaceAutoCompleteTextField(
+                textEditingController: controller.pickupController,
+                focusNode: controller.pickupFocus,
+                googleAPIKey: "AIzaSyCnXk2YpbWjr5UgTFFflUgfDsagIqwwObE",
+                inputDecoration: InputDecoration(
+                  hintText: "Pickup Location",
+                  suffixIcon: const Icon(Icons.location_on),
                 ),
-              );
-            },
+                debounceTime: 600,
+                countries: const ["in"], // India only (optional)
+                isLatLngRequired: true,
+                getPlaceDetailWithLatLng: (Prediction prediction) {
+                  controller.pickupLat = double.tryParse(prediction.lat ?? "");
+                  controller.pickupLng = double.tryParse(prediction.lng ?? "");
+                },
 
-            itemBuilder: (context, index, Prediction prediction) {
-              return ListTile(
-                leading: const Icon(Icons.location_on),
-                title: Text(prediction.description ?? ""),
-              );
-            },
+                itemClick: (Prediction prediction) {
+                  controller.pickupController.text =
+                      prediction.description ?? "";
+                  controller.pickupController.selection =
+                      TextSelection.fromPosition(
+                        TextPosition(
+                          offset: controller.pickupController.text.length,
+                        ),
+                      );
+                },
 
-            seperatedBuilder: const Divider(),
-            isCrossBtnShown: true,
-          ),
+                itemBuilder: (context, index, Prediction prediction) {
+                  return ListTile(
+                    leading: const Icon(Icons.location_on),
+                    title: Text(prediction.description ?? ""),
+                  );
+                },
 
+                seperatedBuilder: const Divider(),
+                isCrossBtnShown: true,
+              ),
 
               SizedBox(height: spacing * 2),
-      
+
               // -------- Select Time ----------
               Text(
                 "Enter Drop Location",
@@ -173,7 +157,7 @@ class _CabBookingScreenState extends State<CabBookingScreen> {
                 ),
               ),
               SizedBox(height: spacing),
-      
+
               GooglePlaceAutoCompleteTextField(
                 textEditingController: controller.dropController,
                 focusNode: controller.dropFocus,
@@ -185,36 +169,32 @@ class _CabBookingScreenState extends State<CabBookingScreen> {
                 countries: const ["in"],
                 isLatLngRequired: true,
 
-            getPlaceDetailWithLatLng: (Prediction prediction) {
-              controller.dropLat =
-                  double.tryParse(prediction.lat ?? "");
-              controller.dropLng =
-                  double.tryParse(prediction.lng ?? "");
-            },
+                getPlaceDetailWithLatLng: (Prediction prediction) {
+                  controller.dropLat = double.tryParse(prediction.lat ?? "");
+                  controller.dropLng = double.tryParse(prediction.lng ?? "");
+                },
 
-            itemClick: (Prediction prediction) {
-              controller.dropController.text =
-                  prediction.description ?? "";
-              controller.dropController.selection =
-                  TextSelection.fromPosition(
-                TextPosition(
-                  offset: controller.dropController.text.length,
-                ),
-              );
-            },
+                itemClick: (Prediction prediction) {
+                  controller.dropController.text = prediction.description ?? "";
+                  controller
+                      .dropController
+                      .selection = TextSelection.fromPosition(
+                    TextPosition(offset: controller.dropController.text.length),
+                  );
+                },
 
-            itemBuilder: (context, index, Prediction prediction) {
-              return ListTile(
-                leading: const Icon(Icons.location_on),
-                title: Text(prediction.description ?? ""),
-              );
-            },
+                itemBuilder: (context, index, Prediction prediction) {
+                  return ListTile(
+                    leading: const Icon(Icons.location_on),
+                    title: Text(prediction.description ?? ""),
+                  );
+                },
 
-            seperatedBuilder: const Divider(),
-            isCrossBtnShown: true,
+                seperatedBuilder: const Divider(),
+                isCrossBtnShown: true,
               ),
 
-              SizedBox(height: spacing * 2),   
+              SizedBox(height: spacing * 2),
               // -------- Select Time ----------
               Text(
                 "Select Time",
@@ -223,8 +203,8 @@ class _CabBookingScreenState extends State<CabBookingScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: spacing,),
-      
+              SizedBox(height: spacing),
+
               TextField(
                 controller: controller.timeController,
                 focusNode: controller.timeFocus,
@@ -236,7 +216,7 @@ class _CabBookingScreenState extends State<CabBookingScreen> {
                 ),
               ),
               SizedBox(height: spacing * 3),
-      
+
               // -------- Confirm Button ----------
               SizedBox(
                 width: double.infinity,
@@ -260,7 +240,7 @@ class _CabBookingScreenState extends State<CabBookingScreen> {
                   ),
                 ),
               ),
-              SizedBox(height:10),
+              SizedBox(height: 10),
               const ButtonWidget(),
             ],
           ),
@@ -269,7 +249,6 @@ class _CabBookingScreenState extends State<CabBookingScreen> {
     );
   }
 }
-
 
 class ButtonWidget extends StatefulWidget {
   const ButtonWidget({super.key});
@@ -316,9 +295,9 @@ class _ButtonWidgetState extends State<ButtonWidget> {
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Wallet: ${response.walletName}")),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text("Wallet: ${response.walletName}")));
   }
 
   void _openRazorpay() {
@@ -328,12 +307,7 @@ class _ButtonWidgetState extends State<ButtonWidget> {
       'currency': 'INR',
       'name': 'ECE Store',
       'description': 'Cab Booking Payment',
-      'method': {
-        'upi': true,
-        'card': true,
-        'wallet': true,
-        'netbanking': true,
-      },
+      'method': {'upi': true, 'card': true, 'wallet': true, 'netbanking': true},
     };
 
     _razorpay.open(options);
@@ -350,8 +324,8 @@ class _ButtonWidgetState extends State<ButtonWidget> {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color.fromARGB(255, 251, 221, 172),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(15)
-          )
+            borderRadius: BorderRadiusGeometry.circular(15),
+          ),
         ),
         child: Text(
           "Pay via UPI",
@@ -365,8 +339,6 @@ class _ButtonWidgetState extends State<ButtonWidget> {
     );
   }
 }
-
-
 
 class PaymentBottomSheet extends StatelessWidget {
   const PaymentBottomSheet({super.key});
@@ -385,7 +357,10 @@ class PaymentBottomSheet extends StatelessWidget {
         children: [
           Text(
             'Select Payment Method',
-            style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold),
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 20),
 
@@ -394,13 +369,15 @@ class PaymentBottomSheet extends StatelessWidget {
             onPressed: () => Navigator.pop(context, 'cod'),
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadiusGeometry.circular(15)
+                borderRadius: BorderRadiusGeometry.circular(15),
               ),
-              backgroundColor:  Color.fromARGB(255, 251, 221, 172),
-              padding: const EdgeInsets.symmetric(vertical: 14,horizontal: 72),
+              backgroundColor: Color.fromARGB(255, 251, 221, 172),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 72),
             ),
-            child: Text('Cash on Drop (COD)',
-                style: GoogleFonts.poppins(fontSize: 16, color: Colors.black)),
+            child: Text(
+              'Cash on Drop (COD)',
+              style: GoogleFonts.poppins(fontSize: 16, color: Colors.black),
+            ),
           ),
           const SizedBox(height: 12),
 
@@ -409,17 +386,21 @@ class PaymentBottomSheet extends StatelessWidget {
             onPressed: () => Navigator.pop(context, 'upi'),
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadiusGeometry.circular(15)
+                borderRadius: BorderRadiusGeometry.circular(15),
               ),
               backgroundColor: Color(0xFFB3E5FC),
-              padding: const EdgeInsets.symmetric(vertical: 14,horizontal: 124),
+              padding: const EdgeInsets.symmetric(
+                vertical: 14,
+                horizontal: 124,
+              ),
             ),
-            child: Text('Pay via UPI',
-                style: GoogleFonts.poppins(fontSize: 16, color: Colors.black)),
+            child: Text(
+              'Pay via UPI',
+              style: GoogleFonts.poppins(fontSize: 16, color: Colors.black),
+            ),
           ),
         ],
       ),
     );
   }
 }
-

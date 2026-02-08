@@ -5,10 +5,10 @@ import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:parent_care/controllers/grocery_controller.dart';
 
-class GroceryScreen extends StatelessWidget {
+class GroceryScreen extends GetView<GroceryController> {
   GroceryScreen({super.key});
 
-  final controller = Get.put(GroceryController());
+  final controller = Get.find<GroceryController>();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,10 @@ class GroceryScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: cardColor,
             boxShadow: [
-              BoxShadow(color: theme.shadowColor.withOpacity(0.1), blurRadius: 5)
+              BoxShadow(
+                color: theme.shadowColor.withOpacity(0.1),
+                blurRadius: 5,
+              ),
             ],
           ),
           child: Row(
@@ -66,7 +69,10 @@ class GroceryScreen extends StatelessWidget {
                 onPressed: controller.confirmOrder,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.primaryColor,
-                  padding: EdgeInsets.symmetric(horizontal: w * 0.06, vertical: h * 0.015),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: w * 0.06,
+                    vertical: h * 0.015,
+                  ),
                 ),
                 child: Text(
                   "Confirm Order",
@@ -85,14 +91,24 @@ class GroceryScreen extends StatelessWidget {
   }
 
   // ---------------- Store List ----------------
-  Widget _buildStoreSelection(ThemeData theme, Color textColor, Color cardColor, double w, double h) {
+  Widget _buildStoreSelection(
+    ThemeData theme,
+    Color textColor,
+    Color cardColor,
+    double w,
+    double h,
+  ) {
     return Padding(
       padding: EdgeInsets.all(w * 0.04),
       child: ListView(
         children: [
           Text(
             "Choose Store",
-            style: GoogleFonts.poppins(fontSize: w * 0.045, fontWeight: FontWeight.bold, color: textColor),
+            style: GoogleFonts.poppins(
+              fontSize: w * 0.045,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
           ),
           SizedBox(height: h * 0.02),
           ...controller.stores.map(
@@ -102,9 +118,22 @@ class GroceryScreen extends StatelessWidget {
                 margin: EdgeInsets.only(bottom: h * 0.02),
                 color: cardColor,
                 child: ListTile(
-                  leading: CircleAvatar(radius: w * 0.06, backgroundImage: AssetImage(store.image)),
-                  title: Text(store.name, style: GoogleFonts.poppins(fontSize: w * 0.04, color: textColor)),
-                  trailing: Icon(Icons.arrow_forward_ios, size: w * 0.04, color: theme.iconTheme.color),
+                  leading: CircleAvatar(
+                    radius: w * 0.06,
+                    backgroundImage: AssetImage(store.image),
+                  ),
+                  title: Text(
+                    store.name,
+                    style: GoogleFonts.poppins(
+                      fontSize: w * 0.04,
+                      color: textColor,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: w * 0.04,
+                    color: theme.iconTheme.color,
+                  ),
                 ),
               ),
             ),
@@ -115,19 +144,38 @@ class GroceryScreen extends StatelessWidget {
   }
 
   // ---------------- Item Selection ----------------
-  Widget _buildItemSelection(ThemeData theme, Color textColor, Color cardColor, double w, double h) {
+  Widget _buildItemSelection(
+    ThemeData theme,
+    Color textColor,
+    Color cardColor,
+    double w,
+    double h,
+  ) {
     return Padding(
       padding: EdgeInsets.all(w * 0.04),
       child: ListView(
         children: [
           Row(
             children: [
-              Text("Select Items", style: GoogleFonts.poppins(fontSize: w * 0.045, fontWeight: FontWeight.bold, color: textColor)),
+              Text(
+                "Select Items",
+                style: GoogleFonts.poppins(
+                  fontSize: w * 0.045,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
               const Spacer(),
               TextButton(
                 onPressed: () => controller.selectedStore.value = null,
-                child: Text("Change Store", style: GoogleFonts.poppins(fontSize: w * 0.04, color: textColor)),
-              )
+                child: Text(
+                  "Change Store",
+                  style: GoogleFonts.poppins(
+                    fontSize: w * 0.04,
+                    color: textColor,
+                  ),
+                ),
+              ),
             ],
           ),
           SizedBox(height: h * 0.02),
@@ -138,38 +186,34 @@ class GroceryScreen extends StatelessWidget {
             decoration: InputDecoration(
               labelText: "Your Name",
               labelStyle: TextStyle(fontSize: w * 0.04),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           ),
           SizedBox(height: h * 0.015),
 
           // ---------------- Location Field ----------------
-        GooglePlaceAutoCompleteTextField(
-                textEditingController: controller.dropController,
-                focusNode: controller.dropFocus,
-                googleAPIKey: "AIzaSyCnXk2YpbWjr5UgTFFflUgfDsagIqwwObE",
-                inputDecoration: InputDecoration(
-                  hintText: "Drop Location",
-                  suffixIcon: const Icon(Icons.location_on),
-                ),
-                countries: const ["in"],
-                isLatLngRequired: true,
+          GooglePlaceAutoCompleteTextField(
+            textEditingController: controller.dropController,
+            focusNode: controller.dropFocus,
+            googleAPIKey: "AIzaSyCnXk2YpbWjr5UgTFFflUgfDsagIqwwObE",
+            inputDecoration: InputDecoration(
+              hintText: "Drop Location",
+              suffixIcon: const Icon(Icons.location_on),
+            ),
+            countries: const ["in"],
+            isLatLngRequired: true,
 
             getPlaceDetailWithLatLng: (Prediction prediction) {
-              controller.dropLat =
-                  double.tryParse(prediction.lat ?? "");
-              controller.dropLng =
-                  double.tryParse(prediction.lng ?? "");
+              controller.dropLat = double.tryParse(prediction.lat ?? "");
+              controller.dropLng = double.tryParse(prediction.lng ?? "");
             },
 
             itemClick: (Prediction prediction) {
-              controller.dropController.text =
-                  prediction.description ?? "";
-              controller.dropController.selection =
-                  TextSelection.fromPosition(
-                TextPosition(
-                  offset: controller.dropController.text.length,
-                ),
+              controller.dropController.text = prediction.description ?? "";
+              controller.dropController.selection = TextSelection.fromPosition(
+                TextPosition(offset: controller.dropController.text.length),
               );
             },
 
@@ -182,7 +226,7 @@ class GroceryScreen extends StatelessWidget {
 
             seperatedBuilder: const Divider(),
             isCrossBtnShown: true,
-              ),
+          ),
           SizedBox(height: h * 0.02),
 
           ...controller.selectedStore.value!.items.map(
@@ -190,23 +234,55 @@ class GroceryScreen extends StatelessWidget {
               color: cardColor,
               margin: EdgeInsets.only(bottom: h * 0.015),
               child: ListTile(
-                title: Text(item.name, style: GoogleFonts.poppins(fontSize: w * 0.04, color: textColor)),
-                subtitle: Text("₹${item.price}", style: GoogleFonts.poppins(fontSize: w * 0.038, color: textColor)),
+                title: Text(
+                  item.name,
+                  style: GoogleFonts.poppins(
+                    fontSize: w * 0.04,
+                    color: textColor,
+                  ),
+                ),
+                subtitle: Text(
+                  "₹${item.price}",
+                  style: GoogleFonts.poppins(
+                    fontSize: w * 0.038,
+                    color: textColor,
+                  ),
+                ),
                 trailing: ElevatedButton(
                   onPressed: () => controller.addToCart(item),
-                  style: ElevatedButton.styleFrom(backgroundColor: theme.primaryColor, padding: EdgeInsets.symmetric(horizontal: w * 0.04, vertical: h * 0.01)),
-                  child: Text("Add", style: GoogleFonts.poppins(fontSize: w * 0.035, color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.primaryColor,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: w * 0.04,
+                      vertical: h * 0.01,
+                    ),
+                  ),
+                  child: Text(
+                    "Add",
+                    style: GoogleFonts.poppins(
+                      fontSize: w * 0.035,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
           SizedBox(height: h * 0.025),
-          Obx(() => SwitchListTile(
-                title: Text("Home Delivery (₹20)", style: GoogleFonts.poppins(fontSize: w * 0.04, color: textColor)),
-                value: controller.homeDelivery.value,
-                onChanged: (v) => controller.homeDelivery.value = v,
-                activeColor: theme.colorScheme.primary,
-              )),
+          Obx(
+            () => SwitchListTile(
+              title: Text(
+                "Home Delivery (₹20)",
+                style: GoogleFonts.poppins(
+                  fontSize: w * 0.04,
+                  color: textColor,
+                ),
+              ),
+              value: controller.homeDelivery.value,
+              onChanged: (v) => controller.homeDelivery.value = v,
+              activeColor: theme.colorScheme.primary,
+            ),
+          ),
         ],
       ),
     );

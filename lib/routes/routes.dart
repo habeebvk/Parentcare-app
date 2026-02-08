@@ -15,6 +15,7 @@ import 'package:parent_care/screens/parent/hotel_screen.dart';
 import 'package:parent_care/screens/parent/into.dart';
 import 'package:parent_care/screens/parent/oldpeople_gallery.dart';
 import 'package:parent_care/screens/parent/spashscreen.dart';
+import 'package:parent_care/bindings/all_bindings.dart';
 
 class AppRoutes {
   static const intro = '/intro';
@@ -34,23 +35,61 @@ class AppRoutes {
   static const groceryHome = '/groceryHome';
   static const foodOrder = '/foodOrder';
 
-
   static List<GetPage> pages = [
     GetPage(name: oldpeople, page: () => const OldPeopleGalleryScreen()),
-    GetPage(name: home, page: () => const NavScreen()),
-    GetPage(name: intro, page: () => const HomeScreen()),
+    GetPage(
+      name: home,
+      page: () => NavScreen(),
+      binding: NavBinding(),
+    ),
+    GetPage(
+      name: intro,
+      page: () => const HomeScreen(),
+    ), // HomeScreen typically is entry, check if binding needed
     GetPage(name: login, page: () => const LoginScreen()),
     GetPage(name: register, page: () => const RegisterScreen()),
-    GetPage(name: appointment,page: () => const AppointmentScreen()),
-    GetPage(name: cab,page: () => CabBookingScreen()),
-    GetPage(name: grocery,page: () => GroceryScreen()),
-    GetPage(name: notification,page: () => NotificationScreen()),
-    GetPage(name: food,page: () => FoodOrderingScreen()),
-    GetPage(name: splash,page: () => SplashScreen()),
-    GetPage(name: hospital,page: () => HospitalHome()),
-    GetPage(name: hospitalNav,page: () => HospitalNav()),
-    GetPage(name: groceryHome,page: () => OrderSummaryScreen()),
-    GetPage(name: cabHome,page: () => CabHome()),
-    GetPage(name: foodOrder, page:() => FoodOrdersScreen())
+    GetPage(
+      name: appointment,
+      page: () => const AppointmentScreen(),
+      binding: AppointmentBinding(),
+    ),
+    GetPage(name: cab, page: () => CabBookingScreen(), binding: CabBinding()),
+    GetPage(
+      name: grocery,
+      page: () => GroceryScreen(),
+      binding: GroceryBinding(),
+    ),
+    GetPage(
+      name: notification,
+      page: () => NotificationScreen(),
+      binding: NotificationBinding(),
+    ),
+    GetPage(
+      name: food,
+      page: () => FoodOrderingScreen(),
+      binding: FoodBinding(),
+    ),
+    GetPage(name: splash, page: () => SplashScreen()),
+    GetPage(
+      name: hospital,
+      page: () => HospitalHome(),
+      binding: HospitalBinding(),
+    ),
+    GetPage(
+      name: hospitalNav,
+      page: () => HospitalNav(),
+      binding: HospitalBinding(),
+    ), // Reuse hospital binding?
+    GetPage(
+      name: groceryHome,
+      page: () => OrderSummaryScreen(),
+      binding: GroceryBinding(),
+    ), // Reuse grocery binding
+    GetPage(name: cabHome, page: () => CabHome(), binding: CabBinding()),
+    GetPage(
+      name: foodOrder,
+      page: () => FoodOrdersScreen(),
+      binding: FoodBinding(),
+    ),
   ];
 }

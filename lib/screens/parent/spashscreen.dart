@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:parent_care/controllers/grocery_controller.dart';
 import 'package:parent_care/routes/routes.dart';
 import 'package:parent_care/utility/responsive_helper.dart'; // <-- IMPORT RESPONSIVE
 
@@ -12,12 +13,13 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
 
     Future.delayed(const Duration(seconds: 2), () {
+      Get.put(GroceryController());
+
       Get.offAllNamed(AppRoutes.intro);
     });
   }
@@ -30,20 +32,20 @@ class _SplashScreenState extends State<SplashScreen> {
     double logoSize = Responsive.isMobile(context)
         ? 140
         : Responsive.isTablet(context)
-            ? 180
-            : 220; // desktop
+        ? 180
+        : 220; // desktop
 
     double titleSize = Responsive.isMobile(context)
         ? 26
         : Responsive.isTablet(context)
-            ? 32
-            : 40;
+        ? 32
+        : 40;
 
     double spacing = Responsive.isMobile(context)
         ? 20
         : Responsive.isTablet(context)
-            ? 30
-            : 40;
+        ? 30
+        : 40;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -51,7 +53,6 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
             // App logo responsive
             Icon(
               Icons.health_and_safety,
